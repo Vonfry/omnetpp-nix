@@ -1,0 +1,3 @@
+[submodule "omnetpp"]
+	path = omnetpp
+	url = https://github.com/omnetpp/omnetpp.git
