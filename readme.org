@@ -1,0 +1,14 @@
+* OMNeT++ Nix
+
+Build OMNeT++ with Nix.
+
+** Usage
+
+Just run ~nix-build~.
+
+Here are some arguments in [[file:default.nix][default.nix]]. Please check them, and use ~callPackage~ to customize.
+
+** Submodule
+
+The submodule is just to help me test opmnetpp locally. You can pass your src as
+a argument to [[./default.nix][default.nix]]
