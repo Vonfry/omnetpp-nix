@@ -1,0 +1,23 @@
+diff --git a/configure b/configure
+index c9834e301b..d611553c47 100755
+--- a/configure
++++ b/configure
+@@ -2239,6 +2239,7 @@ LIB_PREFIX="lib"
+ CFLAGS_DEBUG=${CFLAGS_DEBUG:- -g -Wall}
+ CFLAGS_RELEASE=${CFLAGS_RELEASE:- -O3 -DNDEBUG=1}
+ CFLAGS=${CFLAGS:-}
++CFLAGS+=${QT_CORE_INCLUDE}
+ DEPENDFLAGS=${DEPENDFLAGS:- -MMD -MP -MF \$@.d}
+ CXXFLAGS=${CXXFLAGS:- -std=c++11}
+ DEFINES=${DEFINES:-}
+@@ -4204,10 +4205,6 @@ if test "$PERL" = "not found"; then
+    { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Perl not found -- please install it! Perl is required by opp_makemake and some other programs." >&5
+ $as_echo "$as_me: WARNING: Perl not found -- please install it! Perl is required by opp_makemake and some other programs." >&2;}
+ fi
+-if test ! -x /usr/bin/perl; then
+-   this_perl=`which perl`
+-   as_fn_error $? "Perl MUST be available as /usr/bin/perl. Creating a soft link should help: ln -s $this_perl /usr/bin/perl" "$LINENO" 5
+-fi
+ 
+ # swig is used for building the ui support libs
+ 
