@@ -41,7 +41,9 @@ let
   qtbaseDevDirs = builtins.filter
                     (n: (builtins.getAttr n qtbaseDevDirsSet) == "directory")
                     (builtins.attrNames qtbaseDevDirsSet);
-  qtbaseCFlags = builtins.foldl' (l: x: l + " -isystem " + x ) "" qtbaseDevDirs;
+  qtbaseCFlags = builtins.foldl'
+                  (l: x: l + " -isystem " + (qtbase.dev + /include) + "/" + x )
+                  "" qtbaseDevDirs;
 in
 stdenv.mkDerivation rec {
   src = ./omnetpp;
@@ -65,6 +67,8 @@ stdenv.mkDerivation rec {
                     then [ libpcap ]
                     else [ ]);
 
+  NIX_CFLAGS_COMPILE = qtbaseCFlags;
+
   patches = [ ./patch.configure
               ./patch.setenv
               ./patch.HOME
@@ -77,10 +81,8 @@ stdenv.mkDerivation rec {
                    ++ (if ! enableParallel
                        then [ "WITH_PARSIM=no" ]
                        else []);
-  NIX_CFLAGS_COMPILE = qtbaseCFlags;
   preConfigure = ''
     cp configure.user.dist configure.user
     . setenv
-    export NIX_CFLAGS_COMPILE="$NIX_CFLAGS_COMPILE ${NIX_CFLAGS_COMPILE}"
     '';
 }
