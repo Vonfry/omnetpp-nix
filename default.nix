@@ -85,4 +85,12 @@ stdenv.mkDerivation rec {
     cp configure.user.dist configure.user
     . setenv
     '';
+
+  installPhase = ''
+    cp -r bin ${placeholder "out"}/bin
+    cp -r include ${placeholder "dev"}/include
+    cp -r doc ${placeholder "doc"}/doc
+    mkdir ${placeholder "doc"}/share
+    cp -r samples ${placeholder "doc"}/share/samples
+    '';
 }
