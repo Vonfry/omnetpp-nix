@@ -77,11 +77,10 @@ stdenv.mkDerivation rec {
                    ++ (if ! enableParallel
                        then [ "WITH_PARSIM=no" ]
                        else []);
+  NIX_CFLAGS_COMPILE = qtbaseCFlags;
   preConfigure = ''
     cp configure.user.dist configure.user
     . setenv
     export NIX_CFLAGS_COMPILE="$NIX_CFLAGS_COMPILE ${NIX_CFLAGS_COMPILE}"
     '';
-
-  NIX_CFLAGS_COMPILE = qtbaseCFlags;
 }
