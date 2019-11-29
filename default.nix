@@ -80,7 +80,7 @@ stdenv.mkDerivation rec {
   preConfigure = ''
     cp configure.user.dist configure.user
     . setenv
-    export QT_CORE_INCLUDE=" -isystem ${qtbase.dev}/include/QtCore "
+    export NIX_CFLAGS_COMPILE="$NIX_CFLAGS_COMPILE ${NIX_CFLAGS_COMPILE}"
     '';
 
   NIX_CFLAGS_COMPILE = qtbaseCFlags;

@@ -1,16 +1,19 @@
 diff --git a/configure b/configure
-index c9834e301b..d611553c47 100755
+index c9834e301b..a4c4bb584f 100755
 --- a/configure
 +++ b/configure
-@@ -2239,6 +2239,7 @@ LIB_PREFIX="lib"
+@@ -2239,8 +2239,10 @@ LIB_PREFIX="lib"
  CFLAGS_DEBUG=${CFLAGS_DEBUG:- -g -Wall}
  CFLAGS_RELEASE=${CFLAGS_RELEASE:- -O3 -DNDEBUG=1}
  CFLAGS=${CFLAGS:-}
-+CFLAGS+=${QT_CORE_INCLUDE}
++CFLAGS+=${NIX_CFLAGS_COMPILE}
  DEPENDFLAGS=${DEPENDFLAGS:- -MMD -MP -MF \$@.d}
  CXXFLAGS=${CXXFLAGS:- -std=c++11}
++CXXFLAGS+=${NIX_CFLAGS_COMPILE}
  DEFINES=${DEFINES:-}
-@@ -4204,10 +4205,6 @@ if test "$PERL" = "not found"; then
+ PREFER_CLANG=${PREFER_CLANG:-yes}
+ PREFER_QTENV=${PREFER_QTENV:-yes}
+@@ -4204,10 +4206,6 @@ if test "$PERL" = "not found"; then
     { $as_echo "$as_me:${as_lineno-$LINENO}: WARNING: Perl not found -- please install it! Perl is required by opp_makemake and some other programs." >&5
  $as_echo "$as_me: WARNING: Perl not found -- please install it! Perl is required by opp_makemake and some other programs." >&2;}
  fi
