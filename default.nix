@@ -1,4 +1,6 @@
 let pkgs = import <nixpkgs> {};
+    python3with = pkgs.python3.withPackages
+      (pkgs: with pkgs; [ numpy scipy pandas ipython ]);
 in
 { stdenv                ? pkgs.stdenv
 , gawk                  ? pkgs.gawk
@@ -7,7 +9,7 @@ in
 , flex                  ? pkgs.flex
 , perl                  ? pkgs.perl
 , python                ? pkgs.python
-, python3               ? pkgs.python3
+, python3               ? python3with
 , qtbase                ? pkgs.qt5.qtbase
 , libsForQt5            ? pkgs.libsForQt5
 , tcl                   ? pkgs.tcl
@@ -40,9 +42,11 @@ stdenv.mkDerivation rec {
 
   outputs = [ "out" "doc" "dev" ];
 
-  nativeBuildInputs = [ gawk which doxygen qtbase ];
-  buildInputs = [ bison flex perl python python3 tcl libxml2 graphviz perl
-                  qtbase tk inkscape webkitgtk zlib jre nemiver
+  propagatedNativeBuildInputs = [ gawk which doxygen qtbase graphviz perl bison
+                                  flex
+                                ];
+  buildInputs = [ python python3 tcl libxml2 qtbase tk inkscape webkitgtk zlib
+                  jre nemiver
                 ]
                 ++ (if enable3dVisualization
                     then [ openscenegraph ]
@@ -54,7 +58,11 @@ stdenv.mkDerivation rec {
                     then [ libpcap ]
                     else [ ]);
 
-  patches = [ ./patch.configure ./patch.setenv ./patch.HOME ];
+  patches = [ ./patch.configure
+              ./patch.setenv
+              ./patch.HOME
+              ./patch.ar
+            ];
   configureFlags = [ ]
                    ++ (if ! enable3dVisualization
                        then [ "WITH_OSG=no" "WITH_OSGEARTH=no" ]
