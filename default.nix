@@ -50,7 +50,7 @@ stdenv.mkDerivation rec {
   name = builtins.replaceStrings [ "\n" ]  [ "" ]
           (builtins.readFile (src + /Version));
 
-  outputs = [ "out" "doc" "dev" ];
+  outputs = [ "out" "doc" "dev" "share" ];
 
   propagatedNativeBuildInputs = [ gawk which doxygen graphviz perl bison flex
                                 ];
@@ -87,10 +87,10 @@ stdenv.mkDerivation rec {
     '';
 
   installPhase = ''
-    cp -r bin ${placeholder "out"}/bin
-    cp -r include ${placeholder "dev"}/include
-    cp -r doc ${placeholder "doc"}/doc
-    mkdir ${placeholder "doc"}/share
-    cp -r samples ${placeholder "doc"}/share/samples
+    cp -r bin ${placeholder "out"}
+    cp -r include ${placeholder "dev"}
+    cp -r doc ${placeholder "doc"}
+    mkdir -p ${placeholder "doc"}/share/omnetpp
+    cp -r samples ${placeholder "doc"}/share/omnetpp
     '';
 }
