@@ -35,6 +35,14 @@ assert enable3dVisualization -> openscenegraph != null;
 assert enableParallel -> openmpi != null && akaroa != null;
 assert enablePCAP -> libpcap != null;
 
+let
+
+  qtbaseDevDirsSet = builtins.readDir (qtbase.dev + /include);
+  qtbaseDevDirs = builtins.filter
+                    (n: (builtins.getAttr n qtbaseDevDirsSet) == "directory")
+                    (builtins.attrNames qtbaseDevDirsSet);
+  qtbaseCFlags = builtins.foldl' (l: x: l + " -isystem " + x ) "" qtbaseDevDirs;
+in
 stdenv.mkDerivation rec {
   src = ./omnetpp;
   name = builtins.replaceStrings [ "\n" ]  [ "" ]
@@ -42,8 +50,7 @@ stdenv.mkDerivation rec {
 
   outputs = [ "out" "doc" "dev" ];
 
-  propagatedNativeBuildInputs = [ gawk which doxygen qtbase graphviz perl bison
-                                  flex
+  propagatedNativeBuildInputs = [ gawk which doxygen graphviz perl bison flex
                                 ];
   buildInputs = [ python python3 tcl libxml2 qtbase tk inkscape webkitgtk zlib
                   jre nemiver
@@ -75,4 +82,6 @@ stdenv.mkDerivation rec {
     . setenv
     export QT_CORE_INCLUDE=" -isystem ${qtbase.dev}/include/QtCore "
     '';
+
+  NIX_CFLAGS_COMPILE = qtbaseCFlags;
 }
