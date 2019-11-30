@@ -69,10 +69,9 @@ stdenv.mkDerivation rec {
 
   NIX_CFLAGS_COMPILE = qtbaseCFlags;
 
-  patches = [ ./patch.configure
-              ./patch.setenv
+  patches = [ ./patch.setenv
               ./patch.HOME
-              ./patch.ar
+              ./patch.configure
             ];
   configureFlags = [ ]
                    ++ (if ! enable3dVisualization
@@ -84,6 +83,10 @@ stdenv.mkDerivation rec {
   preConfigure = ''
     cp configure.user.dist configure.user
     . setenv
+    # export CFLAGS=$NIX_CFLAGS_COMPILE
+    # use patch instead, becasue of configure script has a problem with space
+    # split between ~isystem~ and ~path~.
+    export AR="$AR cr"
     '';
 
   installPhase = ''
