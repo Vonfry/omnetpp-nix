@@ -1,0 +1,107 @@
+patchelf --print-soname --print-rpath --print-needed bin
+read: Is a directory
+patchelf --print-soname --print-rpath --print-needed bin/opp_msgc
+missing ELF header
+patchelf --print-soname --print-rpath --print-needed bin/opp_featuretool
+not an ELF executable
+patchelf --print-soname --print-rpath --print-needed bin/opp_scavetool
+missing ELF header
+patchelf --print-soname --print-rpath --print-needed bin/opp_nedtool
+/home/vonfry/sources/omnetpp-nix/omnetpp/lib:/lib:.:/nix/store/32m203qkk7m094xwk4xpgpy3ai810bxx-omnetpp-5.5.1/lib64:/nix/store/32m203qkk7m094xwk4xpgpy3ai810bxx-omnetpp-5.5.1/lib:/nix/store/vgk6d9xy6zs205pz4sh253xm9hq82sgz-expat-2.2.7/lib:/nix/store/pnd2kl27sag76h23wa5kl95a76n3k9i3-glibc-2.27/lib:/nix/store/4l35nqpaiwzhfafrpby1xf7kfik7ai7c-gcc-8.3.0-lib/lib
+liboppnedxml_dbg.so
+liboppcommon_dbg.so
+libexpat.so.1
+libstdc++.so.6
+libm.so.6
+libgcc_s.so.1
+libc.so.6
+patchelf --print-soname --print-rpath --print-needed bin/opp_eventlogtool
+missing ELF header
+patchelf --print-soname --print-rpath --print-needed bin/omnest
+not an ELF executable
+patchelf --print-soname --print-rpath --print-needed bin/scavetool
+/home/vonfry/sources/omnetpp-nix/omnetpp/lib:/lib:.:/nix/store/32m203qkk7m094xwk4xpgpy3ai810bxx-omnetpp-5.5.1/lib64:/nix/store/32m203qkk7m094xwk4xpgpy3ai810bxx-omnetpp-5.5.1/lib:/nix/store/pnd2kl27sag76h23wa5kl95a76n3k9i3-glibc-2.27/lib:/nix/store/4l35nqpaiwzhfafrpby1xf7kfik7ai7c-gcc-8.3.0-lib/lib
+liboppscave_dbg.so
+liboppcommon_dbg.so
+libstdc++.so.6
+libm.so.6
+libgcc_s.so.1
+libc.so.6
+patchelf --print-soname --print-rpath --print-needed bin/opp_msgtool
+/home/vonfry/sources/omnetpp-nix/omnetpp/lib:/lib:.:/nix/store/32m203qkk7m094xwk4xpgpy3ai810bxx-omnetpp-5.5.1/lib64:/nix/store/32m203qkk7m094xwk4xpgpy3ai810bxx-omnetpp-5.5.1/lib:/nix/store/vgk6d9xy6zs205pz4sh253xm9hq82sgz-expat-2.2.7/lib:/nix/store/pnd2kl27sag76h23wa5kl95a76n3k9i3-glibc-2.27/lib:/nix/store/4l35nqpaiwzhfafrpby1xf7kfik7ai7c-gcc-8.3.0-lib/lib
+liboppnedxml_dbg.so
+liboppcommon_dbg.so
+libexpat.so.1
+libstdc++.so.6
+libm.so.6
+libgcc_s.so.1
+libc.so.6
+patchelf --print-soname --print-rpath --print-needed bin/splitvec
+not an ELF executable
+patchelf --print-soname --print-rpath --print-needed bin/opp_runall
+not an ELF executable
+patchelf --print-soname --print-rpath --print-needed bin/opp_fingerprinttest
+not an ELF executable
+patchelf --print-soname --print-rpath --print-needed bin/opp_run_dbg
+/home/vonfry/sources/omnetpp-nix/omnetpp/lib:/lib:.:/nix/store/32m203qkk7m094xwk4xpgpy3ai810bxx-omnetpp-5.5.1/lib64:/nix/store/32m203qkk7m094xwk4xpgpy3ai810bxx-omnetpp-5.5.1/lib:/nix/store/vgk6d9xy6zs205pz4sh253xm9hq82sgz-expat-2.2.7/lib:/nix/store/pnd2kl27sag76h23wa5kl95a76n3k9i3-glibc-2.27/lib:/nix/store/4l35nqpaiwzhfafrpby1xf7kfik7ai7c-gcc-8.3.0-lib/lib
+liboppcmdenv_dbg.so
+liboppenvir_dbg.so
+liboppqtenv_dbg.so
+libopplayout_dbg.so
+liboppsim_dbg.so
+liboppnedxml_dbg.so
+liboppcommon_dbg.so
+libexpat.so.1
+libdl.so.2
+libstdc++.so.6
+libm.so.6
+libgcc_s.so.1
+libc.so.6
+patchelf --print-soname --print-rpath --print-needed bin/eventlogtool
+/home/vonfry/sources/omnetpp-nix/omnetpp/lib:/lib:.:/nix/store/32m203qkk7m094xwk4xpgpy3ai810bxx-omnetpp-5.5.1/lib64:/nix/store/32m203qkk7m094xwk4xpgpy3ai810bxx-omnetpp-5.5.1/lib:/nix/store/pnd2kl27sag76h23wa5kl95a76n3k9i3-glibc-2.27/lib:/nix/store/4l35nqpaiwzhfafrpby1xf7kfik7ai7c-gcc-8.3.0-lib/lib
+liboppcommon_dbg.so
+liboppeventlog_dbg.so
+libstdc++.so.6
+libm.so.6
+libgcc_s.so.1
+libc.so.6
+patchelf --print-soname --print-rpath --print-needed bin/omnetpp
+not an ELF executable
+patchelf --print-soname --print-rpath --print-needed bin/opp_configfilepath
+missing ELF header
+patchelf --print-soname --print-rpath --print-needed bin/opp_shlib_postprocess
+not an ELF executable
+patchelf --print-soname --print-rpath --print-needed bin/opp_test
+not an ELF executable
+patchelf --print-soname --print-rpath --print-needed bin/opp_run_release
+/home/vonfry/sources/omnetpp-nix/omnetpp/lib:/lib:.:/nix/store/32m203qkk7m094xwk4xpgpy3ai810bxx-omnetpp-5.5.1/lib64:/nix/store/32m203qkk7m094xwk4xpgpy3ai810bxx-omnetpp-5.5.1/lib:/nix/store/vgk6d9xy6zs205pz4sh253xm9hq82sgz-expat-2.2.7/lib:/nix/store/pnd2kl27sag76h23wa5kl95a76n3k9i3-glibc-2.27/lib:/nix/store/4l35nqpaiwzhfafrpby1xf7kfik7ai7c-gcc-8.3.0-lib/lib
+liboppcmdenv.so
+liboppenvir.so
+liboppqtenv.so
+libopplayout.so
+liboppsim.so
+liboppnedxml.so
+liboppcommon.so
+libexpat.so.1
+libdl.so.2
+libstdc++.so.6
+libm.so.6
+libgcc_s.so.1
+libc.so.6
+patchelf --print-soname --print-rpath --print-needed bin/opp_makemake
+not an ELF executable
+patchelf --print-soname --print-rpath --print-needed bin/opp_run
+/home/vonfry/sources/omnetpp-nix/omnetpp/lib:/lib:.:/nix/store/32m203qkk7m094xwk4xpgpy3ai810bxx-omnetpp-5.5.1/lib64:/nix/store/32m203qkk7m094xwk4xpgpy3ai810bxx-omnetpp-5.5.1/lib:/nix/store/vgk6d9xy6zs205pz4sh253xm9hq82sgz-expat-2.2.7/lib:/nix/store/pnd2kl27sag76h23wa5kl95a76n3k9i3-glibc-2.27/lib:/nix/store/4l35nqpaiwzhfafrpby1xf7kfik7ai7c-gcc-8.3.0-lib/lib
+liboppcmdenv.so
+liboppenvir.so
+liboppqtenv.so
+libopplayout.so
+liboppsim.so
+liboppnedxml.so
+liboppcommon.so
+libexpat.so.1
+libdl.so.2
+libstdc++.so.6
+libm.so.6
+libgcc_s.so.1
+libc.so.6
