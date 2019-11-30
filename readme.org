@@ -2,13 +2,30 @@
 
 Build OMNeT++ with Nix.
 
+** Install
+
+*** From Src
+#+BEGIN_SRC shell
+git clone http://gitlab.com/Vonfry/omnetpp-nix
+nix-build
+#+END_SRC
+
+*** nix-env
+
+#+BEGIN_SRC shell
+nix-env -i omnetpp-<version> -f https://gitlab.com/Vonfry/omnetpp-nix/tree/master/
+#+END_SRC
+
 ** Usage
 
-Just run ~nix-build~.
+Of course, you can use this project as your projects' dependency, which is
+recommended a lot instead of instealling it.
 
-Here are some arguments in [[file:default.nix][default.nix]]. Please check them, and use ~callPackage~ to customize.
+Here are some arguments in [[file:default.nix][default.nix]]. Please check them, and use ~callPackage~
+to customize. For example, you may want to override python3 with other
+packages which you need.
 
 ** Submodule
 
 The submodule is just to help me test opmnetpp locally. You can pass your src as
-a argument to [[./default.nix][default.nix]]
+a argument to [[./default.nix][default.nix]], and override ~name~.
