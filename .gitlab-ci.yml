@@ -2,5 +2,9 @@ default:
   image: nixos/nix:latest
 
 nix:
-  script: nix-build
+  script:
+    - git submodule update --init
+    - nix-build
   stage: build
+  cache:
+    path: omnetpp
