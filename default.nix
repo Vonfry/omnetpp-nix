@@ -103,7 +103,14 @@ stdenv.mkDerivation rec {
       patch_list=(opp_nedtool scavetool opp_msgtool opp_run_dbg eventlogtool opp_run_release opp_run)
       cd bin
       for bin in $patch_list; do
-        patchelf --set-rpath $(patchelf --print-rpath $bin | sed s,$build_pwd,,g | sed s,.,,g | sed s,::,,g) $bin
+        patchelf \
+          --set-rpath \
+          $(patchelf --print-rpath $bin                                   | \
+            sed -E s,:?$build_pwd/lib(64)?:?,,g                           | \
+            sed -E s,:?.:?,,g                                             | \
+            sed -E s,${placeholder "out"}/lib,${placeholder "dev"}/lib,g  | \
+            sed -E s,${placeholder "out"}/lib64,${placeholder "dev"}/lib64) \
+          $bin
       done
     )
     '';
