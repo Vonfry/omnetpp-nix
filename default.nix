@@ -92,8 +92,19 @@ stdenv.mkDerivation rec {
   installPhase = ''
     cp -r bin ${placeholder "out"}
     cp -r include ${placeholder "dev"}
+    cp -r lib ${placeholder "dev"}
     cp -r doc ${placeholder "doc"}
     mkdir -p ${placeholder "doc"}/share/omnetpp
     cp -r samples ${placeholder "doc"}/share/omnetpp
+    '';
+  preFixup = ''
+    (
+      bulid_pwd=$(pwd)
+      patch_list=(opp_nedtool scavetool opp_msgtool opp_run_dbg eventlogtool opp_run_release opp_run)
+      cd bin
+      for bin in $patch_list; do
+        patchelf --set-rpath $(patchelf --print-rpath $bin | sed s,$build_pwd,,g | sed s,.,,g | sed s,::,,g) $bin
+      done
+    )
     '';
 }

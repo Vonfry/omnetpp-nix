@@ -1,8 +1,11 @@
 default:
   image: nixos/nix:latest
   before_script:
-    - test ! -d .nix/store && mkdir -p .nix/store && cp -r /nix/store .nix
+    - test ! -d .nix/store && mkdir -p .nix/store
+    - ln -sf /nix/store/* .nix/store
     - mount --bind .nix/store /nix/store
+  after_script:
+    - find .nix/store -type l | xargs rm
   cache:
     paths:
       - .nix
