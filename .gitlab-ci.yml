@@ -2,7 +2,9 @@ default:
   image: nixos/nix:latest
   before_script:
     - test ! -d .nix/store && mkdir -p .nix/store
-    - ln -sf /nix/store/* .nix/store
+    - test ! -d .nix/store-orig && mkdir -p .nix/store-orig
+    - test $(ls /nix/store | sh512sum) != $(ls .nix/store-orig | sh512sum) && rm -rf .nix/store-orig/* && cp -r /nix/store/* .nix/store-orig
+    - ln -s .nix/store-orig/* .nix/store
     - mount --bind .nix/store /nix/store
   after_script:
     - find .nix/store -type l | xargs rm
