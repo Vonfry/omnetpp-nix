@@ -1,9 +1,7 @@
 default:
   image: nixos/nix:latest
   before_script:
-    - test ! -d .nix/cache && mkdir -p .nix/cache
-    - test ! -d /nix/store && mkdir /nix/store
-    - echo origin nix store && ls /nix/store
+    - test ! -d .nix/cache && mkdir -p .nix/cache && cp -r /nix/store .nix/store
     - mount --bind .nix/cache /nix/store
   timeout: 2 hours
   cache:
