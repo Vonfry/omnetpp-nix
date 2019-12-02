@@ -1,5 +1,5 @@
 default:
-  image: nixos/nix:2.3
+  image: nixos/nix:latest
 
 build:
   srcipt: "nix-build"
