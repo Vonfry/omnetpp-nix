@@ -1,6 +1,5 @@
 default:
   image: nixos/nix:latest
-  timeout: 2 hours
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
