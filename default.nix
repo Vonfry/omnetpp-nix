@@ -101,7 +101,7 @@ stdenv.mkDerivation rec {
     (
       bulid_pwd=$(pwd)
       patch_list=(opp_nedtool scavetool opp_msgtool opp_run_dbg eventlogtool opp_run_release opp_run)
-      cd bin
+      cd ${placeholder "out"}/bin
       for bin in $patch_list; do
         patchelf \
           --set-rpath \
