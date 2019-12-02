@@ -1,10 +1,10 @@
 default:
   image: nixos/nix:latest
 
+variables:
+  GIT_SUBMODULE_STRATEGY: recursive
+
 nix:
   script:
-    - git submodule update --init
     - nix-build
   stage: build
-  cache:
-    path: omnetpp
