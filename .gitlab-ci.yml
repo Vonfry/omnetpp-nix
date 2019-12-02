@@ -1,5 +1,11 @@
 default:
   image: nixos/nix:latest
+  before_script:
+    - test ! -d .nix/store && mkdir -p .nix/store && cp -r /nix/store .nix
+    - mount --bind .nix/store /nix/store
+  cache:
+    paths:
+      - .nix
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
