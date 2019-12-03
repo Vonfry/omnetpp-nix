@@ -50,7 +50,7 @@ stdenv.mkDerivation rec {
   name = builtins.replaceStrings [ "\n" ]  [ "" ]
           (builtins.readFile (src + /Version));
 
-  outputs = [ "out" "doc" "dev" "share" ];
+  outputs = [ "out" "doc" "dev" ];
 
   propagatedNativeBuildInputs = [ gawk which doxygen graphviz perl bison flex
                                 ];
@@ -89,7 +89,16 @@ stdenv.mkDerivation rec {
     export AR="$AR cr"
     '';
 
+  # Because omnetpp configure and makefile don't have install flag. In common,
+  # all things run under omnetpp source directory. So I copy some file into out
+  # directory by myself, but I don't know whether it can work or not.
   installPhase = ''
+    runHook preInstall
+
+    mkdir -p ${placeholder "out"}
+    mkdir -p ${placeholder "dev"}
+    mkdir -p ${placeholder "doc"}
+
     cp -r bin ${placeholder "out"}
     cp -r out ${placeholder "out"}
     cp -r include ${placeholder "dev"}
@@ -97,22 +106,25 @@ stdenv.mkDerivation rec {
     cp -r doc ${placeholder "doc"}
     mkdir -p ${placeholder "doc"}/share/omnetpp
     cp -r samples ${placeholder "doc"}/share/omnetpp
+
+    runHook postInstall
     '';
   preFixup = ''
     (
-      bulid_pwd=$(pwd)
+      build_pwd=$(pwd)
       patch_list=(opp_nedtool scavetool opp_msgtool opp_run_dbg eventlogtool opp_run_release opp_run)
       cd ${placeholder "out"}/bin
-      for bin in $\{patch_list[@]\}; do
+      for bin in ''${patch_list[@]}; do
         patchelf \
           --set-rpath \
-          $(patchelf --print-rpath $bin                                     | \
-            sed -E s,:?/lib(64)?:?,,g                                       | \
-            sed -E s,:?$build_pwd/lib(64)?:?,,g                             | \
-            sed -E s,:?.:?,,g                                               | \
-            sed -E s,${placeholder "out"}/lib,${placeholder "dev"}/lib,g    | \
-            sed -E s,${placeholder "out"}/lib64,${placeholder "dev"}/lib64,g) \
+          $(patchelf --print-rpath $bin                                      | \
+            sed -E s,:?$build_pwd\(/lib\(64\)?\)?:?,,g                       | \
+            sed -E s,:?.:?,${placeholder "out"},g                            | \
+            sed -E s,${placeholder "out"}/lib,${placeholder "dev"}/lib,g     | \
+            sed -E s,${placeholder "out"}/lib64,${placeholder "dev"}/lib64,g ) \
           $bin
+          # sed -E s,:?/lib\(64\)?:?,${placeholder "dev"}/lib,g            | \
+          # sed -E s,:?/tmp/.*:?,,g                                        | \
       done
     )
     '';
