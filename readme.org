@@ -2,6 +2,9 @@
 
 Build OMNeT++ with Nix.
 
+Note: WIP, here are some problem to run. Now I try to use it with nix-shell
+build it for each projects with source files.
+
 ** Install
 
 *** From Src
