@@ -85,7 +85,6 @@ stdenv.mkDerivation rec {
                        then [ "WITH_PARSIM=no" ]
                        else []);
   preConfigure = ''
-    cp configure.user.dist configure.user
     . setenv
     # export CFLAGS=$NIX_CFLAGS_COMPILE
     # use patch instead, becasue of configure script has a problem with space
@@ -109,15 +108,16 @@ stdenv.mkDerivation rec {
     (
       build_pwd=$(pwd)
       for bin in $(find ${placeholder "out"} -type f); do
-        patchelf --print-rpath $bin || echo
-        (patchelf --print-rpath $bin > /dev/null 2>&1) && patchelf --set-rpath \
-          $(patchelf --print-rpath $bin  \
-           | sed -E "s,:?$build_pwd/lib:?,:${placeholder "out"}/lib:,g"                       \
-           | sed -E "s,:?$build_pwd/samples:?,:${placeholder "out"}/share/omnetpp/samples:,g" \
-           | sed -E "s,:+,:,g"                                                                \
-           | sed -E "s,^:,,"                                                                  \
-           | sed -E "s,:$,,"                                                                  \
-           ) $bin
+        rpath=$((patchelf --print-rpath $bin  \
+                | sed -E "s,:?$build_pwd/lib:?,:${placeholder "out"}/lib:,g"                       \
+                | sed -E "s,:?$build_pwd/samples:?,:${placeholder "out"}/share/omnetpp/samples:,g" \
+                | sed -E "s,:+,:,g"                                                                \
+                | sed -E "s,^:,,"                                                                  \
+                | sed -E "s,:$,,")                                                                 \
+               || echo )
+        if [ -n $rpath ]; then
+          patchelf --set-rpath "$rpath" $bin
+        fi
       done
     )
     '';
