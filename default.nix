@@ -108,12 +108,12 @@ stdenv.mkDerivation rec {
     (
       build_pwd=$(pwd)
       for bin in $(find ${placeholder "out"} -type f); do
-        rpath=$((patchelf --print-rpath $bin  \
+        rpath=$(patchelf --print-rpath $bin  \
                 | sed -E "s,:?$build_pwd/lib:?,:${placeholder "out"}/lib:,g"                       \
                 | sed -E "s,:?$build_pwd/samples:?,:${placeholder "out"}/share/omnetpp/samples:,g" \
                 | sed -E "s,:+,:,g"                                                                \
                 | sed -E "s,^:,,"                                                                  \
-                | sed -E "s,:$,,")                                                                 \
+                | sed -E "s,:$,,"                                                                  \
                || echo )
         if [ -n $rpath ]; then
           patchelf --set-rpath "$rpath" $bin
