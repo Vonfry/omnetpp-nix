@@ -54,7 +54,7 @@ stdenv.mkDerivation rec {
 
   name = "omnetpp-5.5.1";
 
-  outputs = [ "out" ];
+  outputs = [ "out" "dev" "doc" ];
 
   propagatedNativeBuildInputs = [ gawk which doxygen graphviz perl bison flex
                                   file ];
@@ -99,15 +99,23 @@ stdenv.mkDerivation rec {
     runHook preInstall
 
     mkdir -p ${placeholder "out"}
+    mkdir -p ${placeholder "dev"}
+    mkdir -p ${placeholder "doc"}
 
-    cp -r . ${placeholder "out"}
+    cp -r bin ${placeholder "out"}
+    cp -r out ${placeholder "out"}
+    cp -r include ${placeholder "dev"}
+    cp -r lib ${placeholder "dev"}
+    cp -r doc ${placeholder "doc"}
+    mkdir -p ${placeholder "doc"}/share/omnetpp
+    cp -r samples ${placeholder "doc"}/share/omnetpp
 
     runHook postInstall
     '';
   preFixup = ''
     (
       build_pwd=$(pwd)
-      for bin in $(find ${placeholder "out"} -type f); do
+      for bin in $(find ${placeholder "out"} ${placeholder "dev"} ${placeholder "share"} -type f); do
         rpath=$(patchelf --print-rpath $bin  \
                 | sed -E "s,:?$build_pwd/lib:?,:${placeholder "out"}/lib:,g"                       \
                 | sed -E "s,:?$build_pwd/samples:?,:${placeholder "out"}/share/omnetpp/samples:,g" \
