@@ -76,6 +76,7 @@ stdenv.mkDerivation rec {
   patches = [ ./patch.setenv
               ./patch.HOME
               ./patch.configure
+              ./patch.bin
             ];
   configureFlags = [ ]
                    ++ (if ! enable3dVisualization
@@ -86,7 +87,6 @@ stdenv.mkDerivation rec {
                        else []);
   preConfigure = ''
     . setenv
-    # export CFLAGS=$NIX_CFLAGS_COMPILE
     # use patch instead, becasue of configure script has a problem with space
     # split between ~isystem~ and ~path~.
     export AR="$AR cr"
