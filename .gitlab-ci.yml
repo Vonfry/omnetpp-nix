@@ -20,3 +20,4 @@ nix:
   script:
     - nix-build
   stage: build
+  only: master
