@@ -3,6 +3,7 @@ let pkgs = import <nixpkgs> {};
       (pkgs: with pkgs; [ numpy scipy pandas ipython ]);
 in
 { stdenv                ? pkgs.stdenv
+, fetchurl              ? pkgs.fetchurl
 , gawk                  ? pkgs.gawk
 , file                  ? pkgs.file
 , which                 ? pkgs.which
@@ -46,9 +47,12 @@ let
                   "" qtbaseDevDirs;
 in
 stdenv.mkDerivation rec {
-  src = ./omnetpp;
-  name = builtins.replaceStrings [ "\n" ]  [ "" ]
-          (builtins.readFile (src + /Version));
+  src = fetchurl {
+    url = https://github.com/omnetpp/omnetpp/releases/download/omnetpp-5.5.1/omnetpp-5.5.1-src-linux.tgz;
+    sha256 = "156ecb9b117ccc3525094a47b97a8d10e0c5554472228ac73e52d863e79b2860";
+  };
+
+  name = "omnetpp-5.5.1";
 
   outputs = [ "out" ];
 
@@ -96,24 +100,15 @@ stdenv.mkDerivation rec {
     runHook preInstall
 
     mkdir -p ${placeholder "out"}
-    mkdir -p ${placeholder "out"}
-    mkdir -p ${placeholder "out"}
 
-    cp -r bin ${placeholder "out"}
-    cp -r out ${placeholder "out"}
-    cp -r include ${placeholder "out"}
-    cp -r lib ${placeholder "out"}
-    cp -r doc ${placeholder "out"}
-    mkdir -p ${placeholder "out"}/share/omnetpp
-    cp -r samples ${placeholder "out"}/share/omnetpp
+    cp -r . ${placeholder "out"}
 
     runHook postInstall
     '';
   preFixup = ''
     (
       build_pwd=$(pwd)
-      for bin in $(find ${placeholder "out"} ${placeholder "doc"} ${placeholder "dev"} -type f); do
-        set -x
+      for bin in $(find ${placeholder "out"} -type f); do
         patchelf --print-rpath $bin || echo
         (patchelf --print-rpath $bin > /dev/null 2>&1) && patchelf --set-rpath \
           $(patchelf --print-rpath $bin  \
@@ -123,7 +118,6 @@ stdenv.mkDerivation rec {
            | sed -E "s,^:,,"                                                                  \
            | sed -E "s,:$,,"                                                                  \
            ) $bin
-        set +x
       done
     )
     '';
