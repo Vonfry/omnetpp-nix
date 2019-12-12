@@ -4,6 +4,7 @@ let pkgs = import <nixpkgs> {};
 in
 { stdenv                ? pkgs.stdenv
 , gawk                  ? pkgs.gawk
+, file                  ? pkgs.file
 , which                 ? pkgs.which
 , bison                 ? pkgs.bison
 , flex                  ? pkgs.flex
@@ -13,7 +14,6 @@ in
 , qtbase                ? pkgs.qt5.qtbase
 , libsForQt5            ? pkgs.libsForQt5
 , tcl                   ? pkgs.tcl
-, tk                    ? pkgs.tk
 , jre                   ? pkgs.jre
 , libxml2               ? pkgs.libxml2
 , graphviz              ? pkgs.graphviz
@@ -50,11 +50,11 @@ stdenv.mkDerivation rec {
   name = builtins.replaceStrings [ "\n" ]  [ "" ]
           (builtins.readFile (src + /Version));
 
-  outputs = [ "out" "doc" "dev" ];
+  outputs = [ "out" ];
 
   propagatedNativeBuildInputs = [ gawk which doxygen graphviz perl bison flex
-                                ];
-  buildInputs = [ python python3 tcl libxml2 qtbase tk inkscape webkitgtk zlib
+                                  file ];
+  buildInputs = [ python python3 tcl libxml2 qtbase inkscape webkitgtk zlib
                   jre nemiver
                 ]
                 ++ (if enable3dVisualization
@@ -96,35 +96,34 @@ stdenv.mkDerivation rec {
     runHook preInstall
 
     mkdir -p ${placeholder "out"}
-    mkdir -p ${placeholder "dev"}
-    mkdir -p ${placeholder "doc"}
+    mkdir -p ${placeholder "out"}
+    mkdir -p ${placeholder "out"}
 
     cp -r bin ${placeholder "out"}
     cp -r out ${placeholder "out"}
-    cp -r include ${placeholder "dev"}
-    cp -r lib ${placeholder "dev"}
-    cp -r doc ${placeholder "doc"}
-    mkdir -p ${placeholder "doc"}/share/omnetpp
-    cp -r samples ${placeholder "doc"}/share/omnetpp
+    cp -r include ${placeholder "out"}
+    cp -r lib ${placeholder "out"}
+    cp -r doc ${placeholder "out"}
+    mkdir -p ${placeholder "out"}/share/omnetpp
+    cp -r samples ${placeholder "out"}/share/omnetpp
 
     runHook postInstall
     '';
   preFixup = ''
     (
       build_pwd=$(pwd)
-      patch_list=(opp_nedtool scavetool opp_msgtool opp_run_dbg eventlogtool opp_run_release opp_run)
-      cd ${placeholder "out"}/bin
-      for bin in ''${patch_list[@]}; do
-        patchelf \
-          --set-rpath \
-          $(patchelf --print-rpath $bin                                      | \
-            sed -E s,:?$build_pwd\(/lib\(64\)?\)?:?,,g                       | \
-            sed -E s,:?.:?,${placeholder "out"},g                            | \
-            sed -E s,${placeholder "out"}/lib,${placeholder "dev"}/lib,g     | \
-            sed -E s,${placeholder "out"}/lib64,${placeholder "dev"}/lib64,g ) \
-          $bin
-          # sed -E s,:?/lib\(64\)?:?,${placeholder "dev"}/lib,g            | \
-          # sed -E s,:?/tmp/.*:?,,g                                        | \
+      for bin in $(find ${placeholder "out"} ${placeholder "doc"} ${placeholder "dev"} -type f); do
+        set -x
+        patchelf --print-rpath $bin || echo
+        (patchelf --print-rpath $bin > /dev/null 2>&1) && patchelf --set-rpath \
+          $(patchelf --print-rpath $bin  \
+           | sed -E "s,:?$build_pwd/lib:?,:${placeholder "out"}/lib:,g"                       \
+           | sed -E "s,:?$build_pwd/samples:?,:${placeholder "out"}/share/omnetpp/samples:,g" \
+           | sed -E "s,:+,:,g"                                                                \
+           | sed -E "s,^:,,"                                                                  \
+           | sed -E "s,:$,,"                                                                  \
+           ) $bin
+        set +x
       done
     )
     '';
