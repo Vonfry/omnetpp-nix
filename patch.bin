@@ -1,64 +1,58 @@
-diff -ur omnetpp-5.5.1/bin/omnest omnetpp-5.5.1.edit/bin/omnest
---- omnetpp-5.5.1/bin/omnest	2019-12-12 15:59:06.783549522 +0800
-+++ omnetpp-5.5.1.edit/bin/omnest	2019-12-12 16:06:43.010260610 +0800
-@@ -3,9 +3,12 @@
+diff --git a/src/utils/omnest b/src/utils/omnest
+index 1f808e4..9d737c5 100755
+--- a/src/utils/omnest
++++ b/src/utils/omnest
+@@ -3,6 +3,8 @@
  # Detects the platform and architecture, and starts the IDE with the right launcher
  #
  IDEDIR=`dirname $0`/../ide
-+USERIDEDIR=$HOME/.cache/omnetpp/ide
++HOMEIDEDIR=$HOME/.cache/omnetpp/ide
++mkdir -p $HOMEIDEDIR
  PLATFORM=`uname -sm`
  LAUNCHER=omnetpp
  
-+mkdir -p $USERIDEDIR
-+
- echo Starting the OMNeT++ IDE...
- 
- if java -version 2>&1 | grep -i "libgcj" >/dev/null 2>/dev/null; then
-@@ -31,13 +34,13 @@
+@@ -31,13 +33,13 @@ case $PLATFORM in
  	$IDEDIR/${LAUNCHER}.exe "$@" $DEFAULT_WORKSPACE_ARGS 2>$IDEDIR/error.log &
          ;;
  *Linux*)
 -	$IDEDIR/${LAUNCHER} "$@" $DEFAULT_WORKSPACE_ARGS 2>$IDEDIR/error.log &
-+	$IDEDIR/${LAUNCHER} "$@" $DEFAULT_WORKSPACE_ARGS 2>$USERIDEDIR/error.log &
++	$IDEDIR/${LAUNCHER} "$@" $DEFAULT_WORKSPACE_ARGS 2>$HOMEIDEDIR/error.log &
          ;;
  *Darwin*)
  	# remove the quarantine extended bit so the IDE will not be copied to a private dir on macOS sierra and later
  	xattr -d com.apple.quarantine $IDEDIR/${LAUNCHER}.app 2>/dev/null
  	# starting the executable directly allows to avoid unsigned app warnings showing up
 -	$IDEDIR/${LAUNCHER}.app/Contents/MacOS/${LAUNCHER} "$@" $DEFAULT_WORKSPACE_ARGS 2>$IDEDIR/error.log &
-+	$IDEDIR/${LAUNCHER}.app/Contents/MacOS/${LAUNCHER} "$@" $DEFAULT_WORKSPACE_ARGS 2>$USERIDEDIR/error.log &
++	$IDEDIR/${LAUNCHER}.app/Contents/MacOS/${LAUNCHER} "$@" $DEFAULT_WORKSPACE_ARGS 2>$HOMEIDEDIR/error.log &
          ;;
  *)
  	echo OMNeT++ IDE is supported only on: Linux, Windows and macOS
-diff -ur omnetpp-5.5.1/bin/omnetpp omnetpp-5.5.1.edit/bin/omnetpp
---- omnetpp-5.5.1/bin/omnetpp	2019-12-12 15:59:06.778549557 +0800
-+++ omnetpp-5.5.1.edit/bin/omnetpp	2019-12-12 16:07:04.514103788 +0800
-@@ -3,9 +3,12 @@
+diff --git a/src/utils/omnetpp b/src/utils/omnetpp
+index 1f808e4..9d737c5 100755
+--- a/src/utils/omnetpp
++++ b/src/utils/omnetpp
+@@ -3,6 +3,8 @@
  # Detects the platform and architecture, and starts the IDE with the right launcher
  #
  IDEDIR=`dirname $0`/../ide
-+USERIDEDIR=$HOME/.cache/omnetpp/ide
++HOMEIDEDIR=$HOME/.cache/omnetpp/ide
++mkdir -p $HOMEIDEDIR
  PLATFORM=`uname -sm`
  LAUNCHER=omnetpp
  
-+mkdir -p $USERIDEDIR
-+
- echo Starting the OMNeT++ IDE...
- 
- if java -version 2>&1 | grep -i "libgcj" >/dev/null 2>/dev/null; then
-@@ -31,13 +34,13 @@
+@@ -31,13 +33,13 @@ case $PLATFORM in
  	$IDEDIR/${LAUNCHER}.exe "$@" $DEFAULT_WORKSPACE_ARGS 2>$IDEDIR/error.log &
          ;;
  *Linux*)
 -	$IDEDIR/${LAUNCHER} "$@" $DEFAULT_WORKSPACE_ARGS 2>$IDEDIR/error.log &
-+	$IDEDIR/${LAUNCHER} "$@" $DEFAULT_WORKSPACE_ARGS 2>$USERIDEDIR/error.log &
++	$IDEDIR/${LAUNCHER} "$@" $DEFAULT_WORKSPACE_ARGS 2>$HOMEIDEDIR/error.log &
          ;;
  *Darwin*)
  	# remove the quarantine extended bit so the IDE will not be copied to a private dir on macOS sierra and later
  	xattr -d com.apple.quarantine $IDEDIR/${LAUNCHER}.app 2>/dev/null
  	# starting the executable directly allows to avoid unsigned app warnings showing up
 -	$IDEDIR/${LAUNCHER}.app/Contents/MacOS/${LAUNCHER} "$@" $DEFAULT_WORKSPACE_ARGS 2>$IDEDIR/error.log &
-+	$IDEDIR/${LAUNCHER}.app/Contents/MacOS/${LAUNCHER} "$@" $DEFAULT_WORKSPACE_ARGS 2>$USERIDEDIR/error.log &
++	$IDEDIR/${LAUNCHER}.app/Contents/MacOS/${LAUNCHER} "$@" $DEFAULT_WORKSPACE_ARGS 2>$HOMEIDEDIR/error.log &
          ;;
  *)
  	echo OMNeT++ IDE is supported only on: Linux, Windows and macOS

@@ -116,6 +116,7 @@ stdenv.mkDerivation rec {
     (
       build_pwd=$(pwd)
       for bin in $(find ${placeholder "out"} ${placeholder "dev"} ${placeholder "doc"} -type f); do
+        set -x
         rpath=$(patchelf --print-rpath $bin  \
                 | sed -E "s,:?$build_pwd/lib:?,:${placeholder "dev"}/lib:,g"                       \
                 | sed -E "s,:?$build_pwd/samples:?,:${placeholder "doc"}/share/omnetpp/samples:,g" \
@@ -123,9 +124,12 @@ stdenv.mkDerivation rec {
                 | sed -E "s,^:,,"                                                                  \
                 | sed -E "s,:$,,"                                                                  \
                || echo )
-        if [ -n $rpath ]; then
+         echo $bin
+         echo $rpath
+        if [ -n "$rpath" ]; then
           patchelf --set-rpath "$rpath" $bin
         fi
+        set +x
       done
     )
     '';
