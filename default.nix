@@ -115,10 +115,10 @@ stdenv.mkDerivation rec {
   preFixup = ''
     (
       build_pwd=$(pwd)
-      for bin in $(find ${placeholder "out"} ${placeholder "dev"} ${placeholder "share"} -type f); do
+      for bin in $(find ${placeholder "out"} ${placeholder "dev"} ${placeholder "doc"} -type f); do
         rpath=$(patchelf --print-rpath $bin  \
-                | sed -E "s,:?$build_pwd/lib:?,:${placeholder "out"}/lib:,g"                       \
-                | sed -E "s,:?$build_pwd/samples:?,:${placeholder "out"}/share/omnetpp/samples:,g" \
+                | sed -E "s,:?$build_pwd/lib:?,:${placeholder "dev"}/lib:,g"                       \
+                | sed -E "s,:?$build_pwd/samples:?,:${placeholder "doc"}/share/omnetpp/samples:,g" \
                 | sed -E "s,:+,:,g"                                                                \
                 | sed -E "s,^:,,"                                                                  \
                 | sed -E "s,:$,,"                                                                  \
