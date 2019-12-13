@@ -99,37 +99,25 @@ stdenv.mkDerivation rec {
     runHook preInstall
 
     mkdir -p ${placeholder "out"}
-    mkdir -p ${placeholder "dev"}
-    mkdir -p ${placeholder "doc"}
-
-    cp -r bin ${placeholder "out"}
-    cp -r out ${placeholder "out"}
-    cp -r include ${placeholder "dev"}
-    cp -r lib ${placeholder "dev"}
-    cp -r doc ${placeholder "doc"}
-    mkdir -p ${placeholder "doc"}/share/omnetpp
-    cp -r samples ${placeholder "doc"}/share/omnetpp
+    cp . -r ${placeholder "out"}
 
     runHook postInstall
     '';
   preFixup = ''
     (
       build_pwd=$(pwd)
-      for bin in $(find ${placeholder "out"} ${placeholder "dev"} ${placeholder "doc"} -type f); do
-        set -x
+      for bin in $(find ${placeholder "out"} -type f); do
         rpath=$(patchelf --print-rpath $bin  \
-                | sed -E "s,:?$build_pwd/lib:?,:${placeholder "dev"}/lib:,g"                       \
-                | sed -E "s,:?$build_pwd/samples:?,:${placeholder "doc"}/share/omnetpp/samples:,g" \
+                | sed -E "s,:\\.:,:,g"                                                             \
+                | sed -E "s,:?$build_pwd/lib:?,:${placeholder "out"}/lib:,g"                       \
+                | sed -E "s,:?$build_pwd/lib64:?,:,g"                                              \
                 | sed -E "s,:+,:,g"                                                                \
                 | sed -E "s,^:,,"                                                                  \
                 | sed -E "s,:$,,"                                                                  \
                || echo )
-         echo $bin
-         echo $rpath
         if [ -n "$rpath" ]; then
           patchelf --set-rpath "$rpath" $bin
         fi
-        set +x
       done
     )
     '';
