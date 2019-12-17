@@ -14,7 +14,6 @@ in
 , python3               ? python3with
 , qtbase                ? pkgs.qt5.qtbase
 , libsForQt5            ? pkgs.libsForQt5
-, tcl                   ? pkgs.tcl
 , jre                   ? pkgs.jre
 , libxml2               ? pkgs.libxml2
 , graphviz              ? pkgs.graphviz
@@ -30,6 +29,7 @@ in
 , zlib                  ? pkgs.zlib
 , nemiver               ? pkgs.nemiver
 , akaroa                ? null
+, xdg_utils             ? pkgs.xdg_utils
 }:
 
 assert enable3dVisualization -> openscenegraph != null;
@@ -45,6 +45,7 @@ let
   qtbaseCFlags = builtins.foldl'
                   (l: x: l + " -isystem " + (qtbase.dev + /include) + "/" + x )
                   "" qtbaseDevDirs;
+  libxml2CFlags = " -isystem ${libxml2.dev}/include/libxml2 ";
 in
 stdenv.mkDerivation rec {
   src = fetchurl {
@@ -56,10 +57,9 @@ stdenv.mkDerivation rec {
 
   outputs = [ "out" ];
 
-  propagatedNativeBuildInputs = [ gawk which doxygen graphviz perl bison flex
-                                  file ];
-  buildInputs = [ python python3 tcl libxml2 qtbase inkscape webkitgtk zlib
-                  jre nemiver
+  propagatedNativeBuildInputs = [ gawk which perl bison flex file ];
+  buildInputs = [ python python3 libxml2 qtbase doxygen graphviz inkscape
+                  webkitgtk zlib jre nemiver xdg_utils
                 ]
                 ++ (if enable3dVisualization
                     then [ openscenegraph ]
@@ -71,7 +71,7 @@ stdenv.mkDerivation rec {
                     then [ libpcap ]
                     else [ ]);
 
-  NIX_CFLAGS_COMPILE = qtbaseCFlags;
+  NIX_CFLAGS_COMPILE = qtbaseCFlags + libxml2CFlags;
 
   patches = [ ./patch.setenv
               ./patch.HOME
