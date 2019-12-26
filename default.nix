@@ -60,15 +60,9 @@ stdenv.mkDerivation rec {
   buildInputs = [ python python3 libxml2 qtbase doxygen graphviz inkscape
                   webkitgtk zlib jre nemiver
                 ]
-                ++ (if enable3dVisualization
-                    then [ openscenegraph ]
-                    else [ ])
-                ++ (if enableParallel
-                    then [ openmpi akaroa ]
-                    else [ ])
-                ++ (if enablePCAP
-                    then [ libpcap ]
-                    else [ ]);
+                ++ lib.optional  enable3dVisualization openscenegraph
+                ++ lib.optionals enableParallel [ openmpi akaroa ]
+                ++ lib.optional  enablePCAP libpcap;
 
   NIX_CFLAGS_COMPILE = qtbaseCFlags + libxml2CFlags;
 
