@@ -29,7 +29,6 @@ in
 , zlib                  ? pkgs.zlib
 , nemiver               ? pkgs.nemiver
 , akaroa                ? null
-, xdg_utils             ? pkgs.xdg_utils
 }:
 
 assert enable3dVisualization -> openscenegraph != null;
@@ -59,7 +58,7 @@ stdenv.mkDerivation rec {
 
   propagatedNativeBuildInputs = [ gawk which perl bison flex file ];
   buildInputs = [ python python3 libxml2 qtbase doxygen graphviz inkscape
-                  webkitgtk zlib jre nemiver xdg_utils
+                  webkitgtk zlib jre nemiver
                 ]
                 ++ (if enable3dVisualization
                     then [ openscenegraph ]
