@@ -1,2 +1,6 @@
-* TODO ide start, read only filesystem
+* TODO add 3d visualization support[0/1]
+  - [ ] akaroa
+* TODO ide start, read only filesystem[0/2]
+  - [ ] wrap qt app
+  - [ ] osgearth
 * TODO split outputs
