@@ -86,6 +86,9 @@ stdenv.mkDerivation rec {
             ];
 
   configureFlags = [ ]
+                   ++  lib.optionals (!withIDE) [ "WITH_QTENV=no"
+                                                  "WITH_TKENV=no"
+                                                ]
                    ++  lib.optionals (!with3dVisualization) [ "WITH_OSG=no"
                                                               "WITH_OSGEARTH=no"
                                                             ]
