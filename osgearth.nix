@@ -17,7 +17,7 @@ stdenv.mkDerivation rec {
     owner = "gwaldron";
     repo = pname;
     rev = version;
-    sha256 = "";
+    sha256 = "09i67rhyfg1fsqkj9jgld3zm2ivvbsnm8hmw3ly3fdvkc8cqlcqn";
   };
 
   propagatedNativeBuildInputs = [ openscenegraph ];
