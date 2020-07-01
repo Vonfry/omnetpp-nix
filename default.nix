@@ -4,66 +4,78 @@ let pkgs = import <nixpkgs> {};
 in
 { stdenv                ? pkgs.stdenv
 , lib                   ? pkgs.lib
-, fetchurl              ? pkgs.fetchurl
+, fetchFromGithub       ? pkgs.fetchFromGithub
 , gawk                  ? pkgs.gawk
 , file                  ? pkgs.file
 , which                 ? pkgs.which
 , bison                 ? pkgs.bison
 , flex                  ? pkgs.flex
 , perl                  ? pkgs.perl
-, python                ? pkgs.python
 , python3               ? python3with
 , qtbase                ? pkgs.qt5.qtbase
+, wrapQtAppHooks        ? pkgs.wrapQtAppHooks
 , libsForQt5            ? pkgs.libsForQt5
 , jre                   ? pkgs.jre
 , libxml2               ? pkgs.libxml2
 , graphviz              ? pkgs.graphviz
 , webkitgtk             ? pkgs.webkitgtk
-, enable3dVisualization ? false
+, withIDE               ? true
+, withNEDDocGen         ? true
+, with3dVisualization   ? true
 , openscenegraph        ? pkgs.openscenegraph
-, enableParallel        ? false
+, osgearth              ? null
+, withParallel          ? false
 , openmpi               ? pkgs.openmpi
-, enablePCAP            ? false
+, withPCAP              ? true
 , libpcap               ? pkgs.libpcap
 , doxygen               ? pkgs.doxygen
-, inkscape              ? pkgs.inkscape
 , zlib                  ? pkgs.zlib
 , nemiver               ? pkgs.nemiver
 , akaroa                ? null
 }:
 
-assert enable3dVisualization -> openscenegraph != null;
-assert enableParallel -> openmpi != null && akaroa != null;
-assert enablePCAP -> libpcap != null;
+assert withIDE -> ! isNull qtbase;
+assert (withIDE && withNEDDocGen) -> ! builtins.any isNull [ doxygen graphviz ];
+assert with3dVisualization -> ! builtins.any isNull [ osgearth openscenegraph ];
+assert withParallel -> ! builtins.any isNull [ openmpi akaroa ];
+assert withPCAP -> ! isNull libpcap;
 
 let
-
   qtbaseDevDirsSet = builtins.readDir (qtbase.dev + /include);
   qtbaseDevDirs = builtins.filter
                     (n: (builtins.getAttr n qtbaseDevDirsSet) == "directory")
-                    (builtins.attrNames qtbaseDevDirsSet);
+                        (builtins.attrNames qtbaseDevDirsSet);
   qtbaseCFlags = builtins.foldl'
                   (l: x: l + " -isystem " + (qtbase.dev + /include) + "/" + x )
                   "" qtbaseDevDirs;
   libxml2CFlags = " -isystem ${libxml2.dev}/include/libxml2 ";
 in
 stdenv.mkDerivation rec {
-  src = fetchurl {
-    url = https://github.com/omnetpp/omnetpp/releases/download/omnetpp-5.5.1/omnetpp-5.5.1-src-linux.tgz;
-    sha256 = "156ecb9b117ccc3525094a47b97a8d10e0c5554472228ac73e52d863e79b2860";
-  };
+  pname = "omnetpp";
+  version = 5.6.2;
 
-  name = "omnetpp-5.5.1";
+  src = fetchFromGithub {
+    owner = pname;
+    repo = pname;
+    rev = "${pname}-${version}";
+    sha256 = "17zia5asi0y44yvw613iglsfsdyhxqn9i4sn1v4218qjqlz33iyv";
+  };
 
   outputs = [ "out" ];
 
   propagatedNativeBuildInputs = [ gawk which perl bison flex file ];
-  buildInputs = [ python python3 libxml2 qtbase doxygen graphviz inkscape
-                  webkitgtk zlib jre nemiver
-                ]
-                ++ lib.optional  enable3dVisualization openscenegraph
-                ++ lib.optionals enableParallel [ openmpi akaroa ]
-                ++ lib.optional  enablePCAP libpcap;
+
+  nativeBuildInputs = lib.optional withIDE [ wrapQtAppHooks ];
+
+
+  dontWrapQtApps = true;
+  qtWrappersArgs = [ ];
+
+  buildInputs = [ python3 libxml2 qtbase webkitgtk zlib jre nemiver]
+             ++ lib.optionals (withIDE && withNEDDocGen) [ graphviz doxygen ]
+             ++ lib.optionals with3dVisualization [ openscenegraph osgearth ]
+             ++ lib.optionals withParallel [ openmpi akaroa ]
+             ++ lib.optional withPCAP libpcap;
 
   NIX_CFLAGS_COMPILE = qtbaseCFlags + libxml2CFlags;
 
@@ -72,13 +84,13 @@ stdenv.mkDerivation rec {
               ./patch.configure
               ./patch.bin
             ];
+
   configureFlags = [ ]
-                   ++ (if ! enable3dVisualization
-                       then [ "WITH_OSG=no" "WITH_OSGEARTH=no" ]
-                       else [])
-                   ++ (if ! enableParallel
-                       then [ "WITH_PARSIM=no" ]
-                       else []);
+                   ++  lib.optionals (!with3dVisualization) [ "WITH_OSG=no"
+                                                              "WITH_OSGEARTH=no"
+                                                            ]
+                   ++ lib.optional (!withParallel) "WITH_PARSIM=no";
+
   preConfigure = ''
     . setenv
     # use patch instead, becasue of configure script has a problem with space
@@ -98,6 +110,7 @@ stdenv.mkDerivation rec {
 
     runHook postInstall
     '';
+
   preFixup = ''
     (
       build_pwd=$(pwd)
@@ -117,5 +130,6 @@ stdenv.mkDerivation rec {
         fi
       done
     )
+    # wrapQtApp "$out/bin/myapp" --prefix PATH : /path/to/bin
     '';
 }

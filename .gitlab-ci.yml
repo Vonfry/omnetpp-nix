@@ -1,24 +1,25 @@
 default:
   image: nixos/nix:latest
-  before_script:
-    - test ! -d .nix/store && mkdir -p .nix/store
-    - test ! -d .nix/store-orig && mkdir -p .nix/store-orig && touch .nix/store-orig/placeholder
-    - alias get-nix-output-path="grep -E \"^[0-9A-z]{32}-nix-[0-9]+\\.[0-9]+\\.[0-9]+$\""
-    - test $(ls /nix/store | get-nix-output-path) != $(ls .nix/store-orig | get-nix-output-path) && rm -rf .nix/store-orig/* && cp -r /nix/store/* .nix/store-orig
-    - ln -s $(pwd)/.nix/store-orig/* .nix/store
-    - mount --bind .nix/store /nix/store
-  after_script:
-    - find .nix/store -type l | xargs rm
   cache:
     paths:
       - .nix
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
+  LOCAL_NIX_STORE: $CI_PROJECT_DIR/.nix/store
 
 nix:
+  before_script:
+    - nix-channel --add https://nixos.org/channels/nixpkgs nixpkgs
+    - nix-channel --update
+    - mkdir -p $LOCAL_NIX_STORE
+    - mkdir -p /etc/nix
+    - echo "substituters = https://cache.nixos.org/ file://$LOCAL_NIX_STORE" | tee -a /etc/nix/nix.conf > /dev/null
+    - echo 'require-sigs = false' | tee -a /etc/nix/nix.conf > /dev/null
   script:
     - nix-build
+    # or use  `nix-build -E "(import <nixpkgs> {}).somePackages.callPackage ./. {}"`
+  after_script:
+    - nix copy --to file://$LOCAL_NIX_STORE --all
   stage: build
-  only:
-    - master
+  only: master
