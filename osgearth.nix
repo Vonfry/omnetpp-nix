@@ -21,7 +21,7 @@ stdenv.mkDerivation rec {
   };
 
   propagatedNativeBuildInputs = [ openscenegraph ];
-  nativeBuildInputs = [ cmake gdal geos sqlite sqlite ];
+  nativeBuildInputs = [ cmake gdal geos sqlite sqlite curl ];
   buildInputs = [ qt5 ];
 
   outputs = [ "out" "curl" ];
