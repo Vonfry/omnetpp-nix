@@ -34,7 +34,7 @@ in
 , akaroa                ? null
 }:
 
-assert withIDE -> ! isNull qtbase;
+assert withIDE -> ! builtins.any isNull [ qtbase jre ];
 assert (withIDE && withNEDDocGen) -> ! builtins.any isNull [ doxygen graphviz ];
 assert with3dVisualization -> ! builtins.any isNull [ osgearth openscenegraph ];
 assert withParallel -> ! builtins.any isNull [ openmpi akaroa ];
@@ -71,7 +71,8 @@ stdenv.mkDerivation rec {
   dontWrapQtApps = true;
   qtWrappersArgs = [ ];
 
-  buildInputs = [ python3 libxml2 qtbase webkitgtk zlib jre nemiver]
+  buildInputs = [ python3 libxml2 webkitgtk zlib nemiver]
+             ++ lib.optionals withIDE [ qtbase jre ]
              ++ lib.optionals (withIDE && withNEDDocGen) [ graphviz doxygen ]
              ++ lib.optionals with3dVisualization [ openscenegraph osgearth ]
              ++ lib.optionals withParallel [ openmpi akaroa ]
@@ -86,12 +87,11 @@ stdenv.mkDerivation rec {
             ];
 
   configureFlags = [ ]
-                   ++  lib.optionals (!withIDE) [ "WITH_QTENV=no"
+                   ++ lib.optionals (!withIDE) [ "WITH_QTENV=no"
                                                   "WITH_TKENV=no"
                                                 ]
-                   ++  lib.optionals (!with3dVisualization) [ "WITH_OSG=no"
-                                                              "WITH_OSGEARTH=no"
-                                                            ]
+                   ++ lib.optionals (!(withIDE && with3dVisualization))
+                     [ "WITH_OSG=no" "WITH_OSGEARTH=no"]
                    ++ lib.optional (!withParallel) "WITH_PARSIM=no";
 
   preConfigure = ''
