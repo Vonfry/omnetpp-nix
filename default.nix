@@ -3,6 +3,7 @@ let pkgs = import <nixpkgs> {};
       (pkgs: with pkgs; [ numpy scipy pandas ipython ]);
 in
 { stdenv                ? pkgs.stdenv
+, callPackage           ? pkgs.callPackage
 , lib                   ? pkgs.lib
 , fetchFromGithub       ? pkgs.fetchFromGithub
 , gawk                  ? pkgs.gawk
@@ -23,7 +24,7 @@ in
 , withNEDDocGen         ? true
 , with3dVisualization   ? false
 , openscenegraph        ? pkgs.openscenegraph
-, osgearth              ? null
+, osgearth              ? callPackage ./osgearth.nix
 , withParallel          ? false
 , openmpi               ? pkgs.openmpi
 , withPCAP              ? true
@@ -31,13 +32,13 @@ in
 , doxygen               ? pkgs.doxygen
 , zlib                  ? pkgs.zlib
 , nemiver               ? pkgs.nemiver
-, akaroa                ? null
+, akaroa                ? null # not free
 }:
 
 assert withIDE -> ! builtins.any isNull [ qtbase jre ];
 assert (withIDE && withNEDDocGen) -> ! builtins.any isNull [ doxygen graphviz ];
-assert with3dVisualization -> ! builtins.any isNull [ osgearth openscenegraph ];
-assert withParallel -> ! builtins.any isNull [ openmpi akaroa ];
+assert with3dVisualization -> ! isNull osgearth;
+assert withParallel -> ! isNull openmpi;
 assert withPCAP -> ! isNull libpcap;
 
 let
@@ -65,18 +66,18 @@ stdenv.mkDerivation rec {
 
   propagatedNativeBuildInputs = [ gawk which perl bison flex file ];
 
-  nativeBuildInputs = lib.optional withIDE [ wrapQtAppHooks ];
+  nativeBuildInputs = [ zlib libxml2 ]
+                   ++ lib.optional withIDE [ wrapQtAppHooks ]
+                   ++ lib.optional with3dVisualization osgearth
+                   ++ lib.optional withParallel openmpi
+                   ++ lib.optional withPCAP libpcap;
 
+  buildInputs = [ python3 webkitgtk nemiver akaroa ]
+             ++ lib.optionals withIDE [ qtbase jre ]
+             ++ lib.optionals (withIDE && withNEDDocGen) [ graphviz doxygen ];
 
   dontWrapQtApps = true;
   qtWrappersArgs = [ ];
-
-  buildInputs = [ python3 libxml2 webkitgtk zlib nemiver]
-             ++ lib.optionals withIDE [ qtbase jre ]
-             ++ lib.optionals (withIDE && withNEDDocGen) [ graphviz doxygen ]
-             ++ lib.optionals with3dVisualization [ openscenegraph osgearth ]
-             ++ lib.optionals withParallel [ openmpi akaroa ]
-             ++ lib.optional withPCAP libpcap;
 
   NIX_CFLAGS_COMPILE = qtbaseCFlags + libxml2CFlags;
 

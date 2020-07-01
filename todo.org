@@ -4,3 +4,5 @@
   - [ ] wrap qt app
   - [ ] osgearth
 * TODO split outputs
+
+* TODO check output binary's dynamic libraries, and clean up the buildInputs
