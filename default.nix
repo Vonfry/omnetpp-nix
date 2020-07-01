@@ -21,7 +21,7 @@ in
 , webkitgtk             ? pkgs.webkitgtk
 , withIDE               ? true
 , withNEDDocGen         ? true
-, with3dVisualization   ? true
+, with3dVisualization   ? false
 , openscenegraph        ? pkgs.openscenegraph
 , osgearth              ? null
 , withParallel          ? false
