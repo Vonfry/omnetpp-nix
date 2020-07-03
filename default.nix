@@ -3,7 +3,7 @@ let pkgs = import <nixpkgs> {};
       (pkgs: with pkgs; [ numpy scipy pandas ipython ]);
 in
 { stdenv                ? pkgs.stdenv
-, callPackage           ? pkgs.callPackage
+, callPackage           ? pkgs.qt5.callPackage
 , lib                   ? pkgs.lib
 , fetchFromGithub       ? pkgs.fetchFromGithub
 , gawk                  ? pkgs.gawk

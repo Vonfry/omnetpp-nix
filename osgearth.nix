@@ -1,12 +1,13 @@
-{ stdenv
-, fetchFromGithub
-, cmake
-, curl
-, gdal
-, openscenegraph
-, geos
-, qt5
-, sqlite
+let pkgs = import <nixpkgs> {}; in
+{ stdenv ? pkgs.stdenv
+, fetchFromGithub ? pkgs.fetchFromGithub
+, cmake ? pkgs.cmake
+, curl ? pkgs.curl
+, gdal ? pkgs.gdal
+, openscenegraph ? pkgs.openscenegraph
+, geos ? pkgs.geos
+, qtbase ? pkgs.qt5.qtbase
+, sqlite ? pkgs.sqlite
 }:
 
 stdenv.mkDerivation rec {
@@ -21,8 +22,8 @@ stdenv.mkDerivation rec {
   };
 
   nativeBuildInputs = [ cmake ];
-  buildInputs = [ qt5 openscenegraph gdal geos sqlite sqlite curl ];
+  buildInputs = [ qtbase openscenegraph gdal geos sqlite sqlite curl ];
 
-  outputs = [ "out" "curl" ];
+  outputs = [ "out" ];
 
 }
