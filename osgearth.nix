@@ -20,9 +20,8 @@ stdenv.mkDerivation rec {
     sha256 = "09i67rhyfg1fsqkj9jgld3zm2ivvbsnm8hmw3ly3fdvkc8cqlcqn";
   };
 
-  propagatedNativeBuildInputs = [ openscenegraph ];
-  nativeBuildInputs = [ cmake gdal geos sqlite sqlite curl ];
-  buildInputs = [ qt5 ];
+  nativeBuildInputs = [ cmake ];
+  buildInputs = [ qt5 openscenegraph gdal geos sqlite sqlite curl ];
 
   outputs = [ "out" "curl" ];
 

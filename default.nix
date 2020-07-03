@@ -66,15 +66,15 @@ stdenv.mkDerivation rec {
 
   propagatedNativeBuildInputs = [ gawk which perl bison flex file ];
 
-  nativeBuildInputs = [ zlib libxml2 ]
-                   ++ lib.optional withIDE [ wrapQtAppHooks ]
-                   ++ lib.optional with3dVisualization osgearth
-                   ++ lib.optional withParallel openmpi
-                   ++ lib.optional withPCAP libpcap;
+  nativeBuildInputs = [ ]
+                   ++ lib.optional withIDE [ wrapQtAppHooks ];
 
-  buildInputs = [ python3 webkitgtk nemiver akaroa ]
+  buildInputs = [ python3 webkitgtk nemiver akaroa zlib libxml2 ]
              ++ lib.optionals withIDE [ qtbase jre ]
-             ++ lib.optionals (withIDE && withNEDDocGen) [ graphviz doxygen ];
+             ++ lib.optionals (withIDE && withNEDDocGen) [ graphviz doxygen ]
+             ++ lib.optional with3dVisualization osgearth
+             ++ lib.optional withParallel openmpi
+             ++ lib.optional withPCAP libpcap;
 
   dontWrapQtApps = true;
   qtWrappersArgs = [ ];
