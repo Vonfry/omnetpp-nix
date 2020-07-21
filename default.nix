@@ -136,4 +136,11 @@ stdenv.mkDerivation rec {
     )
     # wrapQtApp "$out/bin/myapp" --prefix PATH : /path/to/bin
     '';
+
+  meta = with stdenv.lib; {
+    homepage= "https://omnetpp.org";
+    description = "OMNeT++ is an extensible, modular, component-based C++ simulation library and framework, primarily for building network simulators.";
+    license = licenses.unlicense;
+    platforms = platforms.unix;
+  };
 }

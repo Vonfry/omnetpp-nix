@@ -1,6 +1,6 @@
 let pkgs = import <nixpkgs> {}; in
 { stdenv ? pkgs.stdenv
-, fetchFromGithub ? pkgs.fetchFromGithub
+, fetchFromGitHub ? pkgs.fetchFromGitHub
 , cmake ? pkgs.cmake
 , curl ? pkgs.curl
 , gdal ? pkgs.gdal
@@ -14,7 +14,7 @@ stdenv.mkDerivation rec {
   pname = "osgearth";
   version = "3.0";
 
-  src = fetchFromGithub {
+  src = fetchFromGitHub {
     owner = "gwaldron";
     repo = pname;
     rev = version;
@@ -26,4 +26,10 @@ stdenv.mkDerivation rec {
 
   outputs = [ "out" ];
 
+  meta = with stdenv.lib; {
+    homepage = "http://osgearth.org";
+    description = "osgEarth is a C++ geospatial SDK and terrain engine. Just create a simple XML file, point it at your map data, and go! osgEarth supports all kinds of data and comes with lots of examples to help you get up and running quickly and easily.";
+    license = licenses.lgpl3;
+    platforms = platforms.unix;
+  };
 }
