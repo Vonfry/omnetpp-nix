@@ -3,11 +3,12 @@ let pkgs = import <nixpkgs> {}; in
 , fetchFromGitHub ? pkgs.fetchFromGitHub
 , cmake ? pkgs.cmake
 , curl ? pkgs.curl
-, gdal ? pkgs.gdal
+, gdal ? pkgs.gdal_2
 , openscenegraph ? pkgs.openscenegraph
 , geos ? pkgs.geos
 , qtbase ? pkgs.qt5.qtbase
 , sqlite ? pkgs.sqlite
+, libzip ? pkgs.libzip
 }:
 
 stdenv.mkDerivation rec {
@@ -18,7 +19,7 @@ stdenv.mkDerivation rec {
     owner = "gwaldron";
     repo = pname;
     rev = version;
-    sha256 = "09i67rhyfg1fsqkj9jgld3zm2ivvbsnm8hmw3ly3fdvkc8cqlcqn";
+    sha256 = "045x31nn51fsmswhhgmc16wdn6b4dxnfb7w3a0zp2s5q2f92d21k";
   };
 
   nativeBuildInputs = [ cmake ];

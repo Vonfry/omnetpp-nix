@@ -5,7 +5,7 @@ in
 { stdenv                ? pkgs.stdenv
 , callPackage           ? pkgs.qt5.callPackage
 , lib                   ? pkgs.lib
-, fetchFromGithub       ? pkgs.fetchFromGithub
+, fetchFromGitHub       ? pkgs.fetchFromGitHub
 , gawk                  ? pkgs.gawk
 , file                  ? pkgs.file
 , which                 ? pkgs.which
@@ -14,7 +14,7 @@ in
 , perl                  ? pkgs.perl
 , python3               ? python3with
 , qtbase                ? pkgs.qt5.qtbase
-, wrapQtAppHooks        ? pkgs.wrapQtAppHooks
+, wrapQtAppsHook        ? pkgs.qt5.wrapQtAppsHook
 , libsForQt5            ? pkgs.libsForQt5
 , jre                   ? pkgs.jre
 , libxml2               ? pkgs.libxml2
@@ -53,9 +53,9 @@ let
 in
 stdenv.mkDerivation rec {
   pname = "omnetpp";
-  version = 5.6.2;
+  version = "5.6.2";
 
-  src = fetchFromGithub {
+  src = fetchFromGitHub {
     owner = pname;
     repo = pname;
     rev = "${pname}-${version}";
@@ -67,7 +67,7 @@ stdenv.mkDerivation rec {
   propagatedNativeBuildInputs = [ gawk which perl bison flex file ];
 
   nativeBuildInputs = [ ]
-                   ++ lib.optional withIDE [ wrapQtAppHooks ];
+                   ++ lib.optional withIDE [ wrapQtAppsHook ];
 
   buildInputs = [ python3 webkitgtk nemiver akaroa zlib libxml2 ]
              ++ lib.optionals withIDE [ qtbase jre ]
@@ -76,8 +76,8 @@ stdenv.mkDerivation rec {
              ++ lib.optional withParallel openmpi
              ++ lib.optional withPCAP libpcap;
 
-  dontWrapQtApps = true;
-  qtWrappersArgs = [ ];
+  # dontWrapQtApps = true;
+  # qtWrappersArgs = [ ];
 
   NIX_CFLAGS_COMPILE = qtbaseCFlags + libxml2CFlags;
 
