@@ -15,8 +15,7 @@ in
 , python3               ? python3with
 , qtbase                ? pkgs.qt5.qtbase
 , wrapQtAppsHook        ? pkgs.qt5.wrapQtAppsHook
-, libsForQt5            ? pkgs.libsForQt5
-, jre                   ? pkgs.jre
+, jdk                   ? pkgs.jdk
 , libxml2               ? pkgs.libxml2
 , graphviz              ? pkgs.graphviz
 , webkitgtk             ? pkgs.webkitgtk
@@ -36,7 +35,7 @@ in
 , autoPatchelfHook      ? pkgs.autoPatchelfHook
 }:
 
-assert withIDE -> ! builtins.any isNull [ qtbase jre ];
+assert withIDE -> ! builtins.any isNull [ jdk ];
 assert (withIDE && withNEDDocGen) -> ! builtins.any isNull [ doxygen graphviz ];
 assert with3dVisualization -> ! builtins.any isNull [ osgearth openscenegraph ];
 assert withParallel -> ! isNull openmpi;
@@ -66,11 +65,13 @@ stdenv.mkDerivation rec {
   propagatedNativeBuildInputs = [ gawk which perl bison flex file ];
 
   nativeBuildInputs = [ ]
-                   ++ lib.optional withIDE [ wrapQtAppsHook autoPatchelfHook ];
+                      ++ lib.optional withIDE [ wrapQtAppsHook
+                                                autoPatchelfHook
+                                              ];
 
-  buildInputs = [ python3 nemiver akaroa zlib libxml2]
-             ++ lib.optionals withIDE [ qtbase jre ]
-             ++ lib.optionals (withIDE && withNEDDocGen) [graphviz doxygen  webkitgtk ]
+  buildInputs = [ python3 nemiver akaroa zlib libxml2  qtbase ]
+             ++ lib.optionals withIDE [ jdk ]
+             ++ lib.optionals (withIDE && withNEDDocGen) [ graphviz doxygen webkitgtk ]
              ++ lib.optionals with3dVisualization [ osgearth openscenegraph ]
              ++ lib.optional withParallel openmpi
              ++ lib.optional withPCAP libpcap;
@@ -85,12 +86,10 @@ stdenv.mkDerivation rec {
               ./patch.omnetpp
             ];
 
-  configureFlags = [ ]
-                   ++ lib.optionals (!withIDE) [ "WITH_QTENV=no"
-                                                  "WITH_TKENV=no"
-                                                ]
-                   ++ lib.optionals (!(withIDE && with3dVisualization))
-                     [ "WITH_OSG=no" "WITH_OSGEARTH=no"]
+  configureFlags = [ "WITH_QTENV=no" "WITH_TKENV=no"]
+                   ++ lib.optionals with3dVisualization [ "WITH_OSG=no"
+                                                          "WITH_OSGEARTH=no"
+                                                        ]
                    ++ lib.optional (!withParallel) "WITH_PARSIM=no";
 
   preConfigure = ''
