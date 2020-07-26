@@ -5,7 +5,7 @@ in
 { stdenv                ? pkgs.stdenv
 , callPackage           ? pkgs.qt5.callPackage
 , lib                   ? pkgs.lib
-, fetchFromGitHub       ? pkgs.fetchFromGitHub
+, fetchurl              ? pkgs.fetchurl
 , gawk                  ? pkgs.gawk
 , file                  ? pkgs.file
 , which                 ? pkgs.which
@@ -24,8 +24,8 @@ in
 , withNEDDocGen         ? true
 , with3dVisualization   ? false
 , openscenegraph        ? pkgs.openscenegraph
-, osgearth              ? callPackage ./osgearth.nix
-, withParallel          ? false
+, osgearth              ? callPackage ./osgearth.nix { gdal = pkgs.gdal_2; }
+, withParallel          ? true
 , openmpi               ? pkgs.openmpi
 , withPCAP              ? true
 , libpcap               ? pkgs.libpcap
@@ -33,11 +33,12 @@ in
 , zlib                  ? pkgs.zlib
 , nemiver               ? pkgs.nemiver
 , akaroa                ? null # not free
+, autoPatchelfHook      ? pkgs.autoPatchelfHook
 }:
 
 assert withIDE -> ! builtins.any isNull [ qtbase jre ];
 assert (withIDE && withNEDDocGen) -> ! builtins.any isNull [ doxygen graphviz ];
-assert with3dVisualization -> ! isNull osgearth;
+assert with3dVisualization -> ! builtins.any isNull [ osgearth openscenegraph ];
 assert withParallel -> ! isNull openmpi;
 assert withPCAP -> ! isNull libpcap;
 
@@ -55,11 +56,9 @@ stdenv.mkDerivation rec {
   pname = "omnetpp";
   version = "5.6.2";
 
-  src = fetchFromGitHub {
-    owner = pname;
-    repo = pname;
-    rev = "${pname}-${version}";
-    sha256 = "17zia5asi0y44yvw613iglsfsdyhxqn9i4sn1v4218qjqlz33iyv";
+  src = fetchurl {
+    url = "https://github.com/omnetpp/omnetpp/releases/download/omnetpp-5.6.2/omnetpp-5.6.2-src-linux.tgz";
+    sha256 = "0r8vfy90xah7wp49kdlz0a5x0b6nxy2ny9w45cbxr1l4759xdc4p";
   };
 
   outputs = [ "out" ];
@@ -67,12 +66,12 @@ stdenv.mkDerivation rec {
   propagatedNativeBuildInputs = [ gawk which perl bison flex file ];
 
   nativeBuildInputs = [ ]
-                   ++ lib.optional withIDE [ wrapQtAppsHook ];
+                   ++ lib.optional withIDE [ wrapQtAppsHook autoPatchelfHook ];
 
-  buildInputs = [ python3 webkitgtk nemiver akaroa zlib libxml2 ]
+  buildInputs = [ python3 nemiver akaroa zlib libxml2]
              ++ lib.optionals withIDE [ qtbase jre ]
-             ++ lib.optionals (withIDE && withNEDDocGen) [ graphviz doxygen ]
-             ++ lib.optional with3dVisualization osgearth
+             ++ lib.optionals (withIDE && withNEDDocGen) [graphviz doxygen  webkitgtk ]
+             ++ lib.optionals with3dVisualization [ osgearth openscenegraph ]
              ++ lib.optional withParallel openmpi
              ++ lib.optional withPCAP libpcap;
 
@@ -83,8 +82,7 @@ stdenv.mkDerivation rec {
 
   patches = [ ./patch.setenv
               ./patch.HOME
-              ./patch.configure
-              ./patch.bin
+              ./patch.omnetpp
             ];
 
   configureFlags = [ ]
@@ -99,7 +97,7 @@ stdenv.mkDerivation rec {
     . setenv
     # use patch instead, becasue of configure script has a problem with space
     # split between ~isystem~ and ~path~.
-    export AR="$AR cr"
+    export AR="ar cr"
     '';
 
   # Because omnetpp configure and makefile don't have install flag. In common,
@@ -121,10 +119,10 @@ stdenv.mkDerivation rec {
       for bin in $(find ${placeholder "out"} -type f); do
         rpath=$(patchelf --print-rpath $bin  \
                 | sed -E "s,:\\.:,:,g"                                                             \
-                | sed -E "s,:?$build_pwd/lib:?,:${placeholder "dev"}/lib:,g"                       \
+                | sed -E "s,:?$build_pwd/lib:?,:${placeholder "out"}/lib:,g"                       \
                 | sed -E "s,:?$build_pwd/lib64:?,:,g"                                              \
-                | sed -E "s,:?$build_pwd/samples,:${placeholder "doc"}/share/omnetpp/samples,g"    \
-                | sed -E "s,:?${placeholder "out"}/lib:?,:${placeholder "dev"}/lib:,g"             \
+                | sed -E "s,:?$build_pwd/samples,:${placeholder "out"}/share/omnetpp/samples,g"    \
+                | sed -E "s,:?${placeholder "out"}/lib:?,:${placeholder "out"}/lib:,g"             \
                 | sed -E "s,:+,:,g"                                                                \
                 | sed -E "s,^:,,"                                                                  \
                 | sed -E "s,:$,,"                                                                  \
@@ -134,7 +132,10 @@ stdenv.mkDerivation rec {
         fi
       done
     )
-    # wrapQtApp "$out/bin/myapp" --prefix PATH : /path/to/bin
+    '';
+
+  postFixup = ''
+    autoPatchelfFile ${placeholder "out"}/ide/omnetpp
     '';
 
   meta = with stdenv.lib; {

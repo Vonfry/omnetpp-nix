@@ -1,0 +1,33 @@
+diff --git a/src/utils/omnetpp b/src/utils/omnetpp
+index 1f808e4535..ebc8fa9c5f 100755
+--- a/src/utils/omnetpp
++++ b/src/utils/omnetpp
+@@ -5,6 +5,8 @@
+ IDEDIR=`dirname $0`/../ide
+ PLATFORM=`uname -sm`
+ LAUNCHER=omnetpp
++TMPDIR=/tmp/omnetpp
++mkdir -p $TMPDIR
+ 
+ echo Starting the OMNeT++ IDE...
+ 
+@@ -28,16 +30,16 @@ DEFAULT_WORKSPACE_ARGS="-vmargs -Dosgi.instance.area.default=$IDEDIR/../samples"
+ 
+ case $PLATFORM in
+ *MINGW*)
+-	$IDEDIR/${LAUNCHER}.exe "$@" $DEFAULT_WORKSPACE_ARGS 2>$IDEDIR/error.log &
++	$IDEDIR/${LAUNCHER}.exe "$@" $DEFAULT_WORKSPACE_ARGS 2>$TMPDIR/error.log &
+         ;;
+ *Linux*)
+-	$IDEDIR/${LAUNCHER} "$@" $DEFAULT_WORKSPACE_ARGS 2>$IDEDIR/error.log &
++	$IDEDIR/${LAUNCHER} "$@" $DEFAULT_WORKSPACE_ARGS 2>$TMPDIR/error.log &
+         ;;
+ *Darwin*)
+ 	# remove the quarantine extended bit so the IDE will not be copied to a private dir on macOS sierra and later
+ 	xattr -d com.apple.quarantine $IDEDIR/${LAUNCHER}.app 2>/dev/null
+ 	# starting the executable directly allows to avoid unsigned app warnings showing up
+-	$IDEDIR/${LAUNCHER}.app/Contents/MacOS/${LAUNCHER} "$@" $DEFAULT_WORKSPACE_ARGS 2>$IDEDIR/error.log &
++	$IDEDIR/${LAUNCHER}.app/Contents/MacOS/${LAUNCHER} "$@" $DEFAULT_WORKSPACE_ARGS 2>$TMPDIR/error.log &
+         ;;
+ *)
+ 	echo OMNeT++ IDE is supported only on: Linux, Windows and macOS
