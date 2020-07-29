@@ -15,12 +15,32 @@ in
 , python3               ? python3with
 , qtbase                ? pkgs.qt5.qtbase
 , wrapQtAppsHook        ? pkgs.qt5.wrapQtAppsHook
-, jdk                   ? pkgs.jdk
 , libxml2               ? pkgs.libxml2
-, graphviz              ? pkgs.graphviz
-, webkitgtk             ? pkgs.webkitgtk
+, zlib                  ? pkgs.zlib
+, nemiver               ? pkgs.nemiver
 , withIDE               ? true
+, jdk                   ? pkgs.jdk12
+, makeWrapper           ? pkgs.makeWrapper
+, glib                  ? pkgs.glib
+, cairo                 ? pkgs.cairo
+, gsettings-desktop-schemas ? pkgs.gsettings-desktop-schemas
+, gtk                   ? pkgs.gtk3
+, swt                   ? pkgs.swt
+, fontconfig            ? pkgs.fontconfig
+, freetype              ? pkgs.freetype
+, libX11                ? pkgs.xorg.libX11
+, libXrender            ? pkgs.xorg.libXrender
+, libXtst               ? pkgs.xorg.libXtst
+, webkitgtk             ? pkgs.webkitgtk
+, libsoup               ? pkgs.libsoup
+, atk                   ? pkgs.atk
+, gdk-pixbuf            ? pkgs.gdk-pixbuf
+, pango                 ? pkgs.pango
+, libglvnd              ? pkgs.libglvnd
+, libsecret             ? pkgs.libsecret
 , withNEDDocGen         ? true
+, graphviz              ? pkgs.graphviz
+, doxygen               ? pkgs.doxygen
 , with3dVisualization   ? false
 , openscenegraph        ? pkgs.openscenegraph
 , osgearth              ? callPackage ./osgearth.nix { gdal = pkgs.gdal_2; }
@@ -28,11 +48,7 @@ in
 , openmpi               ? pkgs.openmpi
 , withPCAP              ? true
 , libpcap               ? pkgs.libpcap
-, doxygen               ? pkgs.doxygen
-, zlib                  ? pkgs.zlib
-, nemiver               ? pkgs.nemiver
 , akaroa                ? null # not free
-, autoPatchelfHook      ? pkgs.autoPatchelfHook
 }:
 
 assert withIDE -> ! builtins.any isNull [ jdk ];
@@ -62,16 +78,21 @@ stdenv.mkDerivation rec {
 
   outputs = [ "out" ];
 
-  propagatedNativeBuildInputs = [ gawk which perl bison flex file ];
+  propagatedNativeBuildInputs = [ gawk which perl file ];
 
   nativeBuildInputs = [ ]
                       ++ lib.optional withIDE [ wrapQtAppsHook
-                                                autoPatchelfHook
+                                                makeWrapper
                                               ];
 
-  buildInputs = [ python3 nemiver akaroa zlib libxml2  qtbase ]
-             ++ lib.optionals withIDE [ jdk ]
-             ++ lib.optionals (withIDE && withNEDDocGen) [ graphviz doxygen webkitgtk ]
+  buildInputs = [ python3 nemiver akaroa zlib libxml2  qtbase bison flex ]
+             ++ lib.optionals withIDE [ jdk  webkitgtk gtk
+                                        fontconfig freetype libX11 libXrender
+                                        glib gsettings-desktop-schemas swt cairo
+                                        libsoup atk gdk-pixbuf pango libsecret
+                                        libglvnd
+                                      ] # some of them has been contained in propagatedbuildinputs
+             ++ lib.optionals (withIDE && withNEDDocGen) [ graphviz doxygen ]
              ++ lib.optionals with3dVisualization [ osgearth openscenegraph ]
              ++ lib.optional withParallel openmpi
              ++ lib.optional withPCAP libpcap;
@@ -86,10 +107,10 @@ stdenv.mkDerivation rec {
               ./patch.omnetpp
             ];
 
-  configureFlags = [ "WITH_QTENV=no" "WITH_TKENV=no"]
-                   ++ lib.optionals with3dVisualization [ "WITH_OSG=no"
-                                                          "WITH_OSGEARTH=no"
-                                                        ]
+  configureFlags = [ "WITH_TKENV=no" ]
+                   ++ lib.optionals (!with3dVisualization) [ "WITH_OSG=no"
+                                                             "WITH_OSGEARTH=no"
+                                                           ]
                    ++ lib.optional (!withParallel) "WITH_PARSIM=no";
 
   preConfigure = ''
@@ -119,9 +140,8 @@ stdenv.mkDerivation rec {
         rpath=$(patchelf --print-rpath $bin  \
                 | sed -E "s,:\\.:,:,g"                                                             \
                 | sed -E "s,:?$build_pwd/lib:?,:${placeholder "out"}/lib:,g"                       \
-                | sed -E "s,:?$build_pwd/lib64:?,:,g"                                              \
-                | sed -E "s,:?$build_pwd/samples,:${placeholder "out"}/share/omnetpp/samples,g"    \
-                | sed -E "s,:?${placeholder "out"}/lib:?,:${placeholder "out"}/lib:,g"             \
+                | sed -E "s,:?$build_pwd/lib64:?,:${placeholder "out"}/lib64:,g"                   \
+                | sed -E "s,:?$build_pwd/samples,:${placeholder "out"}/samples,g"                  \
                 | sed -E "s,:+,:,g"                                                                \
                 | sed -E "s,^:,,"                                                                  \
                 | sed -E "s,:$,,"                                                                  \
@@ -134,10 +154,24 @@ stdenv.mkDerivation rec {
     '';
 
   postFixup = ''
-    autoPatchelfFile ${placeholder "out"}/ide/omnetpp
+    ( # wrap ide
+      cd ${placeholder "out"}/ide
+      patchelf --set-interpreter ${stdenv.glibc.out}/lib/ld-linux*.so.2 ./omnetpp
+      mv ./omnetpp ./.omnetpp_wrapped
+      makeWrapper ./.omnetpp_wrapped ./omnetpp \
+        --prefix XDG_DATA_DIRS : "$GSETTINGS_SCHEMAS_PATH" \
+        --prefix LD_LIBRARY_PATH : ${jdk}/lib/openjdk/lib/amd64 \
+        --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath (lib.flatten
+                                      [ freetype fontconfig libX11 libXrender
+                                        zlib glib gtk libXtst webkitgtk swt
+                                        cairo libsoup atk gdk-pixbuf pango
+                                        libglvnd libsecret
+                                      ])} \
+        --prefix PATH : ${lib.makeBinPath [ jdk ]}
+    )
     '';
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     homepage= "https://omnetpp.org";
     description = "OMNeT++ is an extensible, modular, component-based C++ simulation library and framework, primarily for building network simulators.";
     license = licenses.unlicense;
