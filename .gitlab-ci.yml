@@ -22,4 +22,5 @@ nix:
   after_script:
     - nix copy --to file://$LOCAL_NIX_STORE --all
   stage: build
-  only: master
+  only:
+    - master
