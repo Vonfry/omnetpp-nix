@@ -1,8 +1,9 @@
 * TODO add 3d visualization support[0/1]
   - [ ] akaroa
-* TODO ide start, read only filesystem[0/2]
-  - [ ] wrap qt app
-  - [ ] osgearth
+* DONE ide start, read only filesystem[2/2]
+  CLOSED: [2020-07-29 Wed 17:54]
+  - [X] wrap qt app
+  - [X] osgearth
 * TODO split outputs
 
 * TODO check output binary's dynamic libraries, and clean up the buildInputs
