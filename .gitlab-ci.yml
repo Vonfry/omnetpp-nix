@@ -24,3 +24,4 @@ nix:
   stage: build
   only:
     - master
+    - tags
