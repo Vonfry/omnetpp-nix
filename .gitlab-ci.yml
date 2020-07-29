@@ -10,7 +10,7 @@ variables:
 
 nix:
   before_script:
-    - nix-channel --add https://nixos.org/channels/nixpkgs nixpkgs
+    - nix-channel --add https://nixos.org/channels/nixos-20.03 nixpkgs
     - nix-channel --update
     - mkdir -p $LOCAL_NIX_STORE
     - mkdir -p /etc/nix
