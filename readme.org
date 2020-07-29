@@ -27,8 +27,3 @@ recommended a lot instead of instealling it.
 Here are some arguments in [[file:default.nix][default.nix]]. Please check them, and use ~callPackage~
 to customize. For example, you may want to override python3 with other
 packages which you need.
-
-** Submodule
-
-The submodule is just to help me test opmnetpp locally. You can pass your src as
-a argument to [[./default.nix][default.nix]], and override ~name~.
