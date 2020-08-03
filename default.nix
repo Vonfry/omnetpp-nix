@@ -78,12 +78,9 @@ stdenv.mkDerivation rec {
 
   outputs = [ "out" ];
 
-  propagatedNativeBuildInputs = [ gawk which perl file ];
+  propagatedNativeBuildInputs = [ gawk which perl file wrapQtAppsHook ];
 
-  nativeBuildInputs = [ ]
-                      ++ lib.optional withIDE [ wrapQtAppsHook
-                                                makeWrapper
-                                              ];
+  nativeBuildInputs = lib.optional withIDE [ makeWrapper ];
 
   buildInputs = [ python3 nemiver akaroa zlib libxml2  qtbase bison flex ]
              ++ lib.optionals withIDE [ jdk  webkitgtk gtk
