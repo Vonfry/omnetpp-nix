@@ -134,7 +134,7 @@ stdenv.mkDerivation rec {
     cp -r bin ${placeholder "out"}/bin
     cp -r include ${placeholder "out"}/include
     cp -r ide ${placeholder "out"}/ide
-    cp -r share ${placeholder "out"}/sharew
+    cp -r doc ${placeholder "out"}/doc
 
     runHook postInstall
     '';
@@ -144,7 +144,6 @@ stdenv.mkDerivation rec {
       build_pwd=$(pwd)
       for bin in $(find ${placeholder "out"} -type f -executable); do
         rpath=$(patchelf --print-rpath $bin  \
-                | sed -E "s,:\\.:,:,g"                                                             \
                 | sed -E "s,:?$build_pwd/lib:?,:${placeholder "out"}/lib:,g"                       \
                 | sed -E "s,:?$build_pwd/lib64:?,:${placeholder "out"}/lib64:,g"                   \
                 | sed -E "s,:?$build_pwd/samples,:${placeholder "out"}/samples,g"                  \
