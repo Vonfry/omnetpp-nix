@@ -134,7 +134,9 @@ stdenv.mkDerivation rec {
     cp -r bin ${placeholder "out"}/bin
     cp -r include ${placeholder "out"}/include
     cp -r ide ${placeholder "out"}/ide
-    cp -r doc ${placeholder "out"}/doc
+    mkdir ${placeholder "out"}/share
+    cp -r samples ${placeholder "out"}/share/samples
+    cp -r doc ${placeholder "out"}/share/doc
 
     runHook postInstall
     '';
