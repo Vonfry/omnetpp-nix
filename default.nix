@@ -130,13 +130,16 @@ stdenv.mkDerivation rec {
 
     mkdir -p ${placeholder "out"}
 
-    cp -r lib ${placeholder "out"}/lib
-    cp -r bin ${placeholder "out"}/bin
-    cp -r include ${placeholder "out"}/include
-    cp -r ide ${placeholder "out"}/ide
-    mkdir ${placeholder "out"}/share
-    cp -r samples ${placeholder "out"}/share/samples
-    cp -r doc ${placeholder "out"}/share/doc
+    installFiles=(lib bin include ide)
+    for f in ''${installFiles[@]}; do
+      cp -r $f ${placeholder "out"}
+    done
+
+    mkdir -p ${placeholder "out"}/share
+    shareFiles=(Makefile.inc samples doc)
+    for f in ''${shareFiles[@]}; do
+      cp -r $f ${placeholder "out"}/share
+    done
 
     runHook postInstall
     '';
@@ -144,7 +147,7 @@ stdenv.mkDerivation rec {
   preFixup = ''
     (
       build_pwd=$(pwd)
-      for bin in $(find ${placeholder "out"} -type f -executable); do
+      for bin in $(find ${placeholder "out"}/{bin,lib,samples,include,ide} -type f -executable); do
         rpath=$(patchelf --print-rpath $bin  \
                 | sed -E "s,:?$build_pwd/lib:?,:${placeholder "out"}/lib:,g"                       \
                 | sed -E "s,:?$build_pwd/lib64:?,:${placeholder "out"}/lib64:,g"                   \
@@ -163,6 +166,8 @@ stdenv.mkDerivation rec {
   dontStrip = true;
 
   postFixup = ''
+    echo "------- $STRIP $TARGET_STRIP"
+    exit -1
     ( # wrap ide
       cd ${placeholder "out"}/ide
       patchelf --set-interpreter ${stdenv.glibc.out}/lib/ld-linux*.so.2 ./omnetpp
@@ -180,6 +185,12 @@ stdenv.mkDerivation rec {
     for bin in $(find ${placeholder "out"}/share/samples -type f -executable); do
       wrapQtApp $bin
     done
+
+    (
+        cd ${placeholder "out"}/bin
+        substituteInPlace opp_configfilepath \
+          --replace ".." "../share"
+    )
     '';
 
   meta = with lib; {
