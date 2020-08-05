@@ -157,7 +157,7 @@ stdenv.mkDerivation rec {
       cd ${placeholder "out"}/ide
       patchelf --set-interpreter ${stdenv.glibc.out}/lib/ld-linux*.so.2 ./omnetpp
       mv ./omnetpp ./.omnetpp_wrapped
-      makeWrapper ${placeholder "out"}/ide/.omnetpp_wrapped ./omnetpp \
+      wrapProgram ./omnetpp \
         --prefix XDG_DATA_DIRS : "$GSETTINGS_SCHEMAS_PATH" \
         --prefix LD_LIBRARY_PATH : ${jdk}/lib/openjdk/lib/amd64 \
         --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath (lib.flatten
@@ -168,6 +168,9 @@ stdenv.mkDerivation rec {
                                       ])} \
         --prefix PATH : ${lib.makeBinPath [ jdk ]}
     )
+    for bin in $(find ${placeholder "out"}/samples -type f -executable); do
+      wrapQtApp $bin
+    done
     '';
 
   meta = with lib; {
