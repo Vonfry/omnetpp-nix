@@ -166,8 +166,6 @@ stdenv.mkDerivation rec {
   dontStrip = true;
 
   postFixup = ''
-    echo "------- $STRIP $TARGET_STRIP"
-    exit -1
     ( # wrap ide
       cd ${placeholder "out"}/ide
       patchelf --set-interpreter ${stdenv.glibc.out}/lib/ld-linux*.so.2 ./omnetpp
