@@ -147,7 +147,7 @@ stdenv.mkDerivation rec {
   preFixup = ''
     (
       build_pwd=$(pwd)
-      for bin in $(find ${placeholder "out"}/{bin,lib,samples,include,ide} -type f -executable); do
+      for bin in $(find ${placeholder "out"} -type f -executable); do
         rpath=$(patchelf --print-rpath $bin  \
                 | sed -E "s,:?$build_pwd/lib:?,:${placeholder "out"}/lib:,g"                       \
                 | sed -E "s,:?$build_pwd/lib64:?,:${placeholder "out"}/lib64:,g"                   \
