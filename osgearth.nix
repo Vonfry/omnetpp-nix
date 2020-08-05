@@ -25,6 +25,8 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [ cmake ];
   buildInputs = [ qtbase openscenegraph gdal geos sqlite sqlite curl ];
 
+  enableParallelBuilding = true;
+
   outputs = [ "out" ];
 
   meta = with stdenv.lib; {

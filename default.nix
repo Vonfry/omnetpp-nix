@@ -117,6 +117,8 @@ stdenv.mkDerivation rec {
     export AR="ar cr"
     '';
 
+  enableParallelBuilding = true;
+
   # Because omnetpp configure and makefile don't have install flag. In common,
   # all things run under omnetpp source directory. So I copy some file into out
   # directory by myself, but I don't know whether it can work or not.
