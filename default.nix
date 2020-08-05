@@ -162,7 +162,6 @@ stdenv.mkDerivation rec {
     ( # wrap ide
       cd ${placeholder "out"}/ide
       patchelf --set-interpreter ${stdenv.glibc.out}/lib/ld-linux*.so.2 ./omnetpp
-      mv ./omnetpp ./.omnetpp_wrapped
       wrapProgram ./omnetpp \
         --prefix XDG_DATA_DIRS : "$GSETTINGS_SCHEMAS_PATH" \
         --prefix LD_LIBRARY_PATH : ${jdk}/lib/openjdk/lib/amd64 \
