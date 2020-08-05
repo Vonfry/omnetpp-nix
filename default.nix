@@ -99,8 +99,7 @@ stdenv.mkDerivation rec {
 
   NIX_CFLAGS_COMPILE = qtbaseCFlags + libxml2CFlags;
 
-  patches = [ ./patch.setenv
-              ./patch.HOME
+  patches = [ ./patch.HOME
               ./patch.omnetpp
             ];
 
@@ -111,7 +110,11 @@ stdenv.mkDerivation rec {
                    ++ lib.optional (!withParallel) "WITH_PARSIM=no";
 
   preConfigure = ''
-    . setenv
+    omnetpp_root=`pwd`
+    export PATH=$omnetpp_root/bin:$PATH
+    export HOSTNAME
+    export HOST
+    export QT_SELECT=5 # on systems with qtchooser, switch to Qt5
     # use patch instead, becasue of configure script has a problem with space
     # split between ~isystem~ and ~path~.
     export AR="ar cr"
@@ -127,7 +130,11 @@ stdenv.mkDerivation rec {
 
     mkdir -p ${placeholder "out"}
 
-    cp -r . ${placeholder "out"}
+    cp -r lib ${placeholder "out"}/lib
+    cp -r bin ${placeholder "out"}/bin
+    cp -r include ${placeholder "out"}/include
+    cp -r ide ${placeholder "out"}/ide
+    cp -r share ${placeholder "out"}/sharew
 
     runHook postInstall
     '';
@@ -135,7 +142,7 @@ stdenv.mkDerivation rec {
   preFixup = ''
     (
       build_pwd=$(pwd)
-      for bin in $(find ${placeholder "out"} -type f); do
+      for bin in $(find ${placeholder "out"} -type f -executable); do
         rpath=$(patchelf --print-rpath $bin  \
                 | sed -E "s,:\\.:,:,g"                                                             \
                 | sed -E "s,:?$build_pwd/lib:?,:${placeholder "out"}/lib:,g"                       \
