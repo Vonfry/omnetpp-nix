@@ -10,7 +10,7 @@ let
     sha256 = "04f07p7x8rcydm93ywhis0lg19rih6gikimarxkq9lyz0al62yvr";
   };
 
-  inetOverride = inet.override {
+  inet_ = inet.override {
     copyFiles  = {
       "src/inet/mobility/single/" = [
         "${src}/res/inet-models/ExtendedSWIMMobility/ExtendedSWIM*.{cc,h,ned}"
@@ -30,10 +30,10 @@ stdenv.mkDerivation {
   src = src;
   nativeBuildInputs = [ omnetpp wrapQtAppsHook perl ];
 
-  buildInputs = [ keetchi inetOverride ];
+  buildInputs = [ keetchi inet_ ];
 
   configurePhase = ''
-    INET_PATH=${inet}/src
+    INET_PATH=${inet_}/src
 
     # Run opp_makemake manual instead of make makefiles
     # Because we need to pass link path
