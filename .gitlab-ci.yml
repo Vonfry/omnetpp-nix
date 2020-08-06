@@ -15,7 +15,7 @@ default:
     - nix copy --to file://$LOCAL_NIX_STORE --all
   cache:
     paths:
-      - .nix
+      - .nix/
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
