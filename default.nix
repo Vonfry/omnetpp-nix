@@ -66,8 +66,8 @@ stdenv.mkDerivation rec {
                      "OMNETPP_IMAGE_PATH=\"./images;./bitmaps;${placeholder "out"}/share/images\""
                    ]
                    ++ optionals (!with3dVisualization) [ "WITH_OSG=no"
-                                                             "WITH_OSGEARTH=no"
-                                                           ]
+                                                         "WITH_OSGEARTH=no"
+                                                       ]
                    ++ optional (!withParallel) "WITH_PARSIM=no";
 
   preConfigure = ''

@@ -65,4 +65,11 @@ in mkDerivation rec {
     runHook postInstall
     '';
 
+  postFixup = ''
+    for f in ${placeholder "out"}/bin/*; do
+      wrapProgram $f \
+        --prefix OMNETPP_IMAGE_PATH ";"  \"./images;./bitmaps;${omnetpp}/share/images;${placeholder "out"}/share/images\""
+    done
+    '';
+
 }
