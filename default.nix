@@ -62,7 +62,9 @@ stdenv.mkDerivation rec {
               ./patch.omnetpp
             ];
 
-  configureFlags = [ "WITH_TKENV=no" ]
+  configureFlags = [ "WITH_TKENV=no"
+                     "OMNETPP_IMAGE_PATH=\"./images;./bitmaps;${placeholder "out"}/share/images\""
+                   ]
                    ++ optionals (!with3dVisualization) [ "WITH_OSG=no"
                                                              "WITH_OSGEARTH=no"
                                                            ]
@@ -89,13 +91,15 @@ stdenv.mkDerivation rec {
 
     mkdir -p ${placeholder "out"}
 
+    find samples -type d -name out | xargs rm -r
+
     installFiles=(lib bin include ide)
     for f in ''${installFiles[@]}; do
       cp -r $f ${placeholder "out"}
     done
 
     mkdir -p ${placeholder "out"}/share
-    shareFiles=(Makefile.inc samples doc)
+    shareFiles=(Makefile.inc samples doc images)
     for f in ''${shareFiles[@]}; do
       cp -r $f ${placeholder "out"}/share
     done
