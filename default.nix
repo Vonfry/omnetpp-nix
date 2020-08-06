@@ -1,54 +1,11 @@
-let pkgs = import <nixpkgs> {};
-    python3with = pkgs.python3.withPackages
-      (pkgs: with pkgs; [ numpy scipy pandas ipython ]);
-in
-{ stdenv                ? pkgs.stdenv
-, callPackage           ? pkgs.callPackage
-, lib                   ? pkgs.lib
-, fetchurl              ? pkgs.fetchurl
-, gawk                  ? pkgs.gawk
-, file                  ? pkgs.file
-, which                 ? pkgs.which
-, bison                 ? pkgs.bison
-, flex                  ? pkgs.flex
-, perl                  ? pkgs.perl
-, python3               ? python3with
-, qtbase                ? pkgs.qt5.qtbase
-, wrapQtAppsHook        ? pkgs.qt5.wrapQtAppsHook
-, libxml2               ? pkgs.libxml2
-, zlib                  ? pkgs.zlib
-, nemiver               ? pkgs.nemiver
-, withIDE               ? true
-, jdk                   ? pkgs.jdk12
-, makeWrapper           ? pkgs.makeWrapper
-, glib                  ? pkgs.glib
-, cairo                 ? pkgs.cairo
-, gsettings-desktop-schemas ? pkgs.gsettings-desktop-schemas
-, gtk                   ? pkgs.gtk3
-, swt                   ? pkgs.swt
-, fontconfig            ? pkgs.fontconfig
-, freetype              ? pkgs.freetype
-, libX11                ? pkgs.xorg.libX11
-, libXrender            ? pkgs.xorg.libXrender
-, libXtst               ? pkgs.xorg.libXtst
-, webkitgtk             ? pkgs.webkitgtk
-, libsoup               ? pkgs.libsoup
-, atk                   ? pkgs.atk
-, gdk-pixbuf            ? pkgs.gdk-pixbuf
-, pango                 ? pkgs.pango
-, libglvnd              ? pkgs.libglvnd
-, libsecret             ? pkgs.libsecret
-, withNEDDocGen         ? true
-, graphviz              ? pkgs.graphviz
-, doxygen               ? pkgs.doxygen
-, with3dVisualization   ? false
-, openscenegraph        ? pkgs.openscenegraph
-, osgearth              ? callPackage ./osgearth.nix { gdal = pkgs.gdal_2; }
-, withParallel          ? true
-, openmpi               ? pkgs.openmpi
-, withPCAP              ? true
-, libpcap               ? pkgs.libpcap
-, akaroa                ? null # not free
+{ stdenv, callPackage, lib, fetchurl, gawk, file, which, bison, flex, perl,
+  python3, qtbase, wrapQtAppsHook, libxml2, zlib, nemiver, withIDE ? true, jdk,
+  makeWrapper, glib, cairo, gsettings-desktop-schemas, gtk, swt, fontconfig,
+  freetype, libX11, libXrender, libXtst, webkitgtk, libsoup, atk, gdk-pixbuf,
+  pango, libglvnd, libsecret, withNEDDocGen ? true, graphviz, doxygen,
+  with3dVisualization ? false, openscenegraph, osgearth, withParallel ? true,
+  openmpi, withPCAP ? true, libpcap,
+  akaroa ? null # not free
 }:
 
 assert withIDE -> ! builtins.any isNull [ jdk ];
@@ -57,15 +14,17 @@ assert with3dVisualization -> ! builtins.any isNull [ osgearth openscenegraph ];
 assert withParallel -> ! isNull openmpi;
 assert withPCAP -> ! isNull libpcap;
 
+with lib;
 let
-  qtbaseDevDirsSet = builtins.readDir (qtbase.dev + /include);
-  qtbaseDevDirs = builtins.filter
-                    (n: (builtins.getAttr n qtbaseDevDirsSet) == "directory")
-                        (builtins.attrNames qtbaseDevDirsSet);
-  qtbaseCFlags = builtins.foldl'
-                  (l: x: l + " -isystem " + (qtbase.dev + /include) + "/" + x )
-                  "" qtbaseDevDirs;
-  libxml2CFlags = " -isystem ${libxml2.dev}/include/libxml2 ";
+  qtbaseDevDirs =
+    mapAttrsToList (n: _: n)
+                   (filterAttrs (_: v: v == "directory")
+                                (builtins.readDir (qtbase.dev + /include)));
+  qtbaseCFlags =
+    concatMapStringsSep " "
+                        (x: "-isystem ${qtbase.dev + /include}/${x}")
+                        qtbaseDevDirs;
+  libxml2CFlags = "-isystem ${libxml2.dev}/include/libxml2";
 in
 stdenv.mkDerivation rec {
   pname = "omnetpp";
@@ -80,34 +39,34 @@ stdenv.mkDerivation rec {
 
   propagatedNativeBuildInputs = [ gawk which perl file wrapQtAppsHook ];
 
-  nativeBuildInputs = lib.optional withIDE [ makeWrapper ];
+  nativeBuildInputs = optional withIDE [ makeWrapper ];
 
   buildInputs = [ python3 nemiver akaroa zlib libxml2  qtbase bison flex ]
-             ++ lib.optionals withIDE [ jdk  webkitgtk gtk
+             ++ optionals withIDE [ jdk  webkitgtk gtk
                                         fontconfig freetype libX11 libXrender
                                         glib gsettings-desktop-schemas swt cairo
                                         libsoup atk gdk-pixbuf pango libsecret
                                         libglvnd
                                       ] # some of them has been contained in propagatedbuildinputs
-             ++ lib.optionals (withIDE && withNEDDocGen) [ graphviz doxygen ]
-             ++ lib.optionals with3dVisualization [ osgearth openscenegraph ]
-             ++ lib.optional withParallel openmpi
-             ++ lib.optional withPCAP libpcap;
+             ++ optionals (withIDE && withNEDDocGen) [ graphviz doxygen ]
+             ++ optionals with3dVisualization [ osgearth openscenegraph ]
+             ++ optional withParallel openmpi
+             ++ optional withPCAP libpcap;
 
   # dontWrapQtApps = true;
   # qtWrappersArgs = [ ];
 
-  NIX_CFLAGS_COMPILE = qtbaseCFlags + libxml2CFlags;
+  NIX_CFLAGS_COMPILE = concatStringsSep " " [ qtbaseCFlags libxml2CFlags ];
 
   patches = [ ./patch.HOME
               ./patch.omnetpp
             ];
 
   configureFlags = [ "WITH_TKENV=no" ]
-                   ++ lib.optionals (!with3dVisualization) [ "WITH_OSG=no"
+                   ++ optionals (!with3dVisualization) [ "WITH_OSG=no"
                                                              "WITH_OSGEARTH=no"
                                                            ]
-                   ++ lib.optional (!withParallel) "WITH_PARSIM=no";
+                   ++ optional (!withParallel) "WITH_PARSIM=no";
 
   preConfigure = ''
     omnetpp_root=`pwd`
@@ -149,12 +108,7 @@ stdenv.mkDerivation rec {
       build_pwd=$(pwd)
       for bin in $(find ${placeholder "out"} -type f -executable); do
         rpath=$(patchelf --print-rpath $bin  \
-                | sed -E "s,:?$build_pwd/lib:?,:${placeholder "out"}/lib:,g"                       \
-                | sed -E "s,:?$build_pwd/lib64:?,:${placeholder "out"}/lib64:,g"                   \
-                | sed -E "s,:?$build_pwd/samples,:${placeholder "out"}/samples,g"                  \
-                | sed -E "s,:+,:,g"                                                                \
-                | sed -E "s,^:,,"                                                                  \
-                | sed -E "s,:$,,"                                                                  \
+                | sed -E "s,$build_pwd,${placeholder "out"}:,g" \
                || echo )
         if [ -n "$rpath" ]; then
           patchelf --set-rpath "$rpath" $bin
@@ -172,13 +126,13 @@ stdenv.mkDerivation rec {
       wrapProgram ${placeholder "out"}/ide/omnetpp \
         --prefix XDG_DATA_DIRS : "$GSETTINGS_SCHEMAS_PATH" \
         --prefix LD_LIBRARY_PATH : ${jdk}/lib/openjdk/lib/amd64 \
-        --prefix LD_LIBRARY_PATH : ${lib.makeLibraryPath (lib.flatten
+        --prefix LD_LIBRARY_PATH : ${makeLibraryPath (flatten
                                       [ freetype fontconfig libX11 libXrender
                                         zlib glib gtk libXtst webkitgtk swt
                                         cairo libsoup atk gdk-pixbuf pango
                                         libglvnd libsecret
                                       ])} \
-        --prefix PATH : ${lib.makeBinPath [ jdk ]}
+        --prefix PATH : ${makeBinPath [ jdk ]}
     )
     for bin in $(find ${placeholder "out"}/share/samples -type f -executable); do
       wrapQtApp $bin

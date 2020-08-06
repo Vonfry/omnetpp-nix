@@ -1,5 +1,18 @@
+stages:
+  - build
+  - build-libs
+
 default:
   image: nixos/nix:latest
+  before_script:
+    - nix-channel --add https://nixos.org/channels/nixos-20.03 nixpkgs
+    - nix-channel --update
+    - mkdir -p $LOCAL_NIX_STORE
+    - mkdir -p /etc/nix
+    - echo "substituters = https://cache.nixos.org/ file://$LOCAL_NIX_STORE" | tee -a /etc/nix/nix.conf > /dev/null
+    - echo 'require-sigs = false' | tee -a /etc/nix/nix.conf > /dev/null
+  after_script:
+    - nix copy --to file://$LOCAL_NIX_STORE --all
   cache:
     paths:
       - .nix
@@ -8,20 +21,24 @@ variables:
   GIT_SUBMODULE_STRATEGY: recursive
   LOCAL_NIX_STORE: $CI_PROJECT_DIR/.nix/store
 
-nix:
-  before_script:
-    - nix-channel --add https://nixos.org/channels/nixos-20.03 nixpkgs
-    - nix-channel --update
-    - mkdir -p $LOCAL_NIX_STORE
-    - mkdir -p /etc/nix
-    - echo "substituters = https://cache.nixos.org/ file://$LOCAL_NIX_STORE" | tee -a /etc/nix/nix.conf > /dev/null
-    - echo 'require-sigs = false' | tee -a /etc/nix/nix.conf > /dev/null
+omnetpp:
   script:
-    - nix-build
-    # or use  `nix-build -E "(import <nixpkgs> {}).somePackages.callPackage ./. {}"`
-  after_script:
-    - nix copy --to file://$LOCAL_NIX_STORE --all
+    - nix-build pkgs.nix -A omnetpp
   stage: build
   only:
     - master
     - tags
+
+inet:
+  script:
+    - nix-build pkgs.nix -A inet
+  dependencies:
+    - omnetpp
+  stage: build-libs
+
+ops:
+  script:
+    - nix-build pkgs.nix -A ops
+  dependencies:
+    - omnetpp
+  stage: build-libs
