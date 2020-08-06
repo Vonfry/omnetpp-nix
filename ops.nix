@@ -86,7 +86,8 @@ stdenv.mkDerivation {
     '';
 
   postFixup = ''
-    wrapQtApp ${placeholder "out"}/ops-simu
+    wrapQtApp ${placeholder "out"}/ops-simu \
+        --prefix OMNETPP_IMAGE_PATH ";"  "./images;./bitmaps;${omnetpp}/share/images;${inet_}/share/images"
     '';
 
 }
