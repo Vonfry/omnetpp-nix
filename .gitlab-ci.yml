@@ -35,6 +35,9 @@ inet:
   dependencies:
     - omnetpp
   stage: build-libs
+  only:
+    - master
+    - tags
 
 ops:
   script:
@@ -42,3 +45,6 @@ ops:
   dependencies:
     - omnetpp
   stage: build-libs
+  only:
+    - master
+    - tags
