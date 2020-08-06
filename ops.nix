@@ -16,7 +16,7 @@ let
         "${src}/res/inet-models/ExtendedSWIMMobility/ExtendedSWIM*.{cc,h,ned}"
         "${src}/res/inet-models/SWIMMobility/*.{cc,h,ned}"
       ];
-      "src/inet/mobility/contract/"  =
+      "src/inet/mobility/contract/" =
         "${src}/res/inet-models/ExtendedSWIMMobility/IReactive*.{h,ned}";
     };
   };
@@ -58,26 +58,13 @@ stdenv.mkDerivation {
     cd src
     opp_makemake -r --deep -I$KEETCHI_API_PATH -I$INET_PATH -L$KEETCHI_API_LIB -L$INET_PATH -lkeetchi -lINET --mode ${buildMode} -o $OPS_MODEL_NAME -f
     cd ..
-    opp_makemake -r --deep -Xinet -I$KEETCHI_API_PATH -I$INET_PATH -L$KEETCHI_API_LIB -L$INET_PATH -lkeetchi -lINET --mode ${buildMode} -o $OPS_MODEL_NAME -f
+    opp_makemake -r --deep -I$KEETCHI_API_PATH -I$INET_PATH -L$KEETCHI_API_LIB -L$INET_PATH -lkeetchi -lINET --mode ${buildMode} -o $OPS_MODEL_NAME -f
     '';
 
   enableParallelBuilding = true;
   dontStrip = true;
 
-  buildPhase = ''
-    flagsArray=(
-        ''${enableParallelBuilding:+-j''${NIX_BUILD_CORES} -l''${NIX_BUILD_CORES}}
-        SHELL=$SHELL
-        $makeFlags ''${makeFlagsArray+"''${makeFlagsArray[@]}"}
-        $buildFlags ''${buildFlagsArray+"''${buildFlagsArray[@]}"}
-    )
-    echoCmd 'build flags' "''${flagsArray[@]}"
-    (
-      cd inet
-      make MODE=${buildMode} "''${flagsArray[@]}"
-    )
-    make MODE=${buildMode} "''${flagsArray[@]}"
-    '';
+  makeFlags = [ "MODE=${buildMode}" ];
 
   installPhase = ''
     rm -rf out
