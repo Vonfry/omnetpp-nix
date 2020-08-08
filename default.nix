@@ -41,7 +41,14 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = optional withIDE [ makeWrapper ];
 
-  buildInputs = [ python3 nemiver akaroa zlib libxml2  qtbase bison flex ]
+  propagatedBuildInputs = [ python3 ]
+                       ++ optionals with3dVisualization [ osgearth
+                                                          openscenegraph
+                                                        ]
+                       ++ optionals (withIDE && withNEDDocGen) [ graphviz
+                                                                 doxygen
+                                                               ];
+  buildInputs = [ nemiver akaroa zlib libxml2  qtbase bison flex ]
              ++ optionals withIDE [ jdk  webkitgtk gtk
                                         fontconfig freetype libX11 libXrender
                                         glib gsettings-desktop-schemas swt cairo
@@ -49,7 +56,6 @@ stdenv.mkDerivation rec {
                                         libglvnd
                                       ] # some of them has been contained in propagatedbuildinputs
              ++ optionals (withIDE && withNEDDocGen) [ graphviz doxygen ]
-             ++ optionals with3dVisualization [ osgearth openscenegraph ]
              ++ optional withParallel openmpi
              ++ optional withPCAP libpcap;
 

@@ -28,7 +28,7 @@ in mkDerivation rec {
   };
 
   nativeBuildInputs = [ wrapQtAppsHook perl ];
-  buildInputs = [ omnetpp ];
+  propagatedBuildInputs = [ omnetpp ];
 
   configurePhase = ''
     runHook preConfigure

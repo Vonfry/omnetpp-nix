@@ -30,7 +30,7 @@ stdenv.mkDerivation {
   src = src;
   nativeBuildInputs = [ omnetpp wrapQtAppsHook perl ];
 
-  buildInputs = [ keetchi inet_ ];
+  propagatedBuildInputs = [ keetchi inet_ ];
 
   configurePhase = ''
     INET_PATH=${inet_}/src
