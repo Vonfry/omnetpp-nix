@@ -26,26 +26,22 @@ omnetpp:
     - nix-build pkgs.nix -A omnetpp
   stage: build
   only:
-    - master
     - tags
 
-# comment them due to gitlab shared ci cannot run them fast
-# inet:
-#   script:
-#     - nix-build pkgs.nix -A inet
-#   dependencies:
-#     - omnetpp
-#   stage: build-libs
-#   only:
-#     - master
-#     - tags
-#
-# ops:
-#   script:
-#     - nix-build pkgs.nix -A ops
-#   dependencies:
-#     - omnetpp
-#   stage: build-libs
-#   only:
-#     - master
-#     - tags
+inet:
+  script:
+    - nix-build pkgs.nix -A inet
+  dependencies:
+    - omnetpp
+  stage: build-libs
+  only:
+    - tags
+
+ops:
+  script:
+    - nix-build pkgs.nix -A ops
+  dependencies:
+    - omnetpp
+  stage: build-libs
+  only:
+    - tags
