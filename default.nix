@@ -50,11 +50,11 @@ stdenv.mkDerivation rec {
                                                                ];
   buildInputs = [ nemiver akaroa zlib libxml2  qtbase bison flex ]
              ++ optionals withIDE [ jdk  webkitgtk gtk
-                                        fontconfig freetype libX11 libXrender
-                                        glib gsettings-desktop-schemas swt cairo
-                                        libsoup atk gdk-pixbuf pango libsecret
-                                        libglvnd
-                                      ] # some of them has been contained in propagatedbuildinputs
+                                    fontconfig freetype libX11 libXrender
+                                    glib gsettings-desktop-schemas swt cairo
+                                    libsoup atk gdk-pixbuf pango libsecret
+                                    libglvnd
+                                  ] # some of them has been contained in propagatedbuildinputs
              ++ optionals (withIDE && withNEDDocGen) [ graphviz doxygen ]
              ++ optional withParallel openmpi
              ++ optional withPCAP libpcap;
