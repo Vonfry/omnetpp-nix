@@ -104,6 +104,9 @@ stdenv.mkDerivation rec {
       cp -r $f ${placeholder "out"}/share
     done
 
+    mkdir -p ${placeholder "out"}/share/emacs/site-lisp
+    cp misc/emacs/*.el ${placeholder "out"}/share/emacs/site-lisp/
+
     runHook postInstall
     '';
 
