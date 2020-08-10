@@ -68,7 +68,8 @@ in mkDerivation rec {
   postFixup = ''
     for f in ${placeholder "out"}/bin/*; do
       wrapProgram $f \
-        --prefix OMNETPP_IMAGE_PATH ";"  "./images;./bitmaps;${omnetpp}/share/images;${placeholder "out"}/share/images"
+        --prefix OMNETPP_IMAGE_PATH ";" "./images;./bitmaps;${omnetpp}/share/images;${placeholder "out"}/share/images" \
+        --set QT_STYLE_OVERRIDE fusion
     done
     '';
 

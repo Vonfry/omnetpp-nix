@@ -59,8 +59,7 @@ stdenv.mkDerivation rec {
              ++ optional withParallel openmpi
              ++ optional withPCAP libpcap;
 
-  # dontWrapQtApps = true;
-  # qtWrappersArgs = [ ];
+  qtWrappersArgs = [ "--set QT_STYLE_OVERRIDE fusion" ];
 
   NIX_CFLAGS_COMPILE = concatStringsSep " " [ qtbaseCFlags libxml2CFlags ];
 
