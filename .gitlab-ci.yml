@@ -9,8 +9,8 @@ default:
     - nix-channel --update
     - mkdir -p $LOCAL_NIX_STORE
     - mkdir -p /etc/nix
-    - echo "substituters = https://cache.nixos.org/ file://$LOCAL_NIX_STORE" | tee -a /etc/nix/nix.conf > /dev/null
-    - echo 'require-sigs = false' | tee -a /etc/nix/nix.conf > /dev/null
+    - echo "substituters = https://cache.nixos.org/ file://$LOCAL_NIX_STORE" | tee -a /etc/nix/nix.conf
+    - echo 'require-sigs = false' | tee -a /etc/nix/nix.conf
   after_script:
     - nix copy --to file://$LOCAL_NIX_STORE --all
   cache:
