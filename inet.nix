@@ -39,7 +39,7 @@ in mkDerivation rec {
     echo $INET_ROOT
     export PATH=$INET_ROOT/bin:$PATH
     export INET_NED_PATH="$INET_ROOT/src:$INET_ROOT/tutorials:$INET_ROOT/showcases:$INET_ROOT/examples"
-    export INET_OMNETPP_OPTIONS="-n $INET_NED_PATH --image-path=$${placeholder "out"}/share/images"
+    export INET_OMNETPP_OPTIONS="-n $INET_NED_PATH --image-path=${placeholder "out"}/share/images"
     export INET_GDB_OPTIONS="-quiet -ex run --args"
     export INET_VALGRIND_OPTIONS="-v --tool=memcheck --leak-check=yes --show-reachable=no --leak-resolution=high --num-callers=40 --freelist-vol=4000000"
     make makefiles
