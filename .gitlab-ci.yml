@@ -5,18 +5,15 @@ stages:
 default:
   image: nixos/nix:latest
   before_script:
-    - if [ -e .gitlab-cache.tar.gz ]; then rm -rf /nix || true; fi
-    - if [ -e .gitlab-cache.tar.gz ]; then tar -xzf .gitlab-cache.tar.gz -C / || true; fi
     - nix-channel --add https://nixos.org/channels/nixos-20.03 nixpkgs
     - nix-channel --update
-  after_script:
-    - tar -czf .gitlab-cache.tar.gz /nix || true
   cache:
     paths:
-      - .gitlab-cache.tar.gz
+      - .nix/
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
+  NIX_STORE_DIR: $CI_PROJECT_DIR/.nix
 
 omnetpp:
   script:
