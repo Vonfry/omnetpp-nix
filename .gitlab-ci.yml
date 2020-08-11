@@ -7,10 +7,7 @@ default:
   before_script:
     - nix-channel --add https://nixos.org/channels/nixos-20.03 nixpkgs
     - nix-channel --update
-    - mkdir -p $LOCAL_NIX_STORE
-    - mkdir -p /etc/nix
-    - echo "substituters = file://$LOCAL_NIX_STORE/ https://cache.nixos.org/" | tee -a /etc/nix/nix.conf > /dev/null
-    - echo 'require-sigs = false' | tee -a /etc/nix/nix.conf > /dev/null
+    - if [ -d $LOCAL_NIX_STORE/store ]; then nix copy --from file://$LOCAL_NIX_STORE --no-check-sigs --all; fi
   after_script:
     - nix copy --to file://$LOCAL_NIX_STORE --all
   cache:
