@@ -37,8 +37,6 @@ in mkDerivation {
     sha256 = "1aqbnjbxz05xamkdmfqbqf0vz1z8n5wnkh6k41gg7rri7kjb6453";
   };
 
-  inherit OMNETPP_IMAGE_PATH NEDPATH;
-
   nativeBuildInputs = [ wrapQtAppsHook perl ];
   propagatedBuildInputs = [ omnetpp ];
 

@@ -44,7 +44,6 @@ stdenv.mkDerivation {
 
   propagatedBuildInputs = [ keetchi inet_ ];
 
-  inherit OMNETPP_IMAGE_PATH NEDPATH;
   inet = inet_;
 
   configurePhase = ''
