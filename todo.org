@@ -7,3 +7,5 @@
 * TODO split outputs
 
 * TODO check output binary's dynamic libraries, and clean up the buildInputs
+
+* setup hook about wrap
