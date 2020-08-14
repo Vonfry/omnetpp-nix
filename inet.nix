@@ -69,6 +69,7 @@ in mkDerivation rec {
     for f in ${placeholder "out"}/bin/*; do
       wrapProgram $f \
         --prefix OMNETPP_IMAGE_PATH ";" "./images;./bitmaps;${omnetpp}/share/images;${placeholder "out"}/share/images" \
+        --prefix NEDPATH ";" "${placeholder "out"}/src" \
         --set QT_STYLE_OVERRIDE fusion
     done
     '';

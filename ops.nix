@@ -88,6 +88,7 @@ stdenv.mkDerivation {
   postFixup = ''
     wrapQtApp ${placeholder "out"}/ops-simu \
         --prefix OMNETPP_IMAGE_PATH ";" "./images;./bitmaps;${omnetpp}/share/images;${inet_}/share/images" \
+        --prefix NEDPATH ";" "${placeholder "out"}/src;${placeholder "out"}/simulations;${inet_}/src" \
         --set QT_STYLE_OVERRIDE fusion
     '';
 
