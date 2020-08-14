@@ -88,7 +88,8 @@ stdenv.mkDerivation {
     ln -s ${placeholder "out"}/inet/bin/*    ${placeholder "out"}/bin/
     ln -s ${placeholder "out"}/inet/src/*.so ${placeholder "out"}/lib/
     ln -s ${placeholder "out"}/inet/src/inet ${placeholder "out"}/include/inet
-    ln -s ${placeholder "out"}/ops-simu ${placeholder "out"}/bin/
+    ln -s ${placeholder "out"}/src           ${placeholder "out"}/include
+    ln -s ${placeholder "out"}/ops-simu      ${placeholder "out"}/bin/
     '';
 
   preFixup = ''
