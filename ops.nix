@@ -21,10 +21,16 @@ let
     };
   };
 
-  OMNETPP_IMAGE_PATH = inet_.OMNETPP_IMAGE_PATH;
-  NEDPATH = inet_.NEDPATH ++ [ "${placeholder "out"}/src"
-                               "${placeholder "out"}/simulations"
-                             ];
+  OMNETPP_IMAGE_PATH = [ "./images"
+                         "./bitmaps"
+                         "${inet_}/share/images"
+                         "${inet_}/share/images"
+                       ];
+  NEDPATH = [ "${placeholder "out"}/src"
+              "${placeholder "out"}/simulations"
+              "${inet_}/src"
+              "${inet_}/examples"
+            ];
 in
 
 with stdenv.lib;

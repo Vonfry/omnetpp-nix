@@ -15,11 +15,15 @@ let
     in concatStringsSep "\n" (flatten (mapAttrsToList f files));
 
 
-  OMNETPP_IMAGE_PATH = omnetpp.OMNETPP_IMAGE_PATH
-                    ++ [ "${placeholder "out"}/share/images" ];
+  OMNETPP_IMAGE_PATH = [ "./images"
+                         "./bitmaps"
+                         "${omnetpp}/share/images"
+                         "${placeholder "out"}/share/images"
+                       ];
   NEDPATH = [ "${placeholder "out"}/src"
               "${placeholder "out"}/examples"
             ];
+
 in mkDerivation {
 
   pname = "INet";
