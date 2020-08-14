@@ -80,6 +80,8 @@ stdenv.mkDerivation {
 
   makeFlags = [ "MODE=${buildMode}" ];
 
+  dontWrapQtApps = true;
+
   installPhase = ''
     rm -rf out
     rm -rf inet/out

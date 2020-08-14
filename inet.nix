@@ -62,6 +62,8 @@ in mkDerivation {
 
   makeFlags = [ "MODE=${buildMode}" ];
 
+  dontWrapQtApps = true;
+
   installPhase = ''
     runHook preInstall
 
@@ -77,7 +79,7 @@ in mkDerivation {
 
   postFixup = ''
     for f in ${placeholder "out"}/bin/*; do
-      wrapProgram $f \
+      wrapQtApp $f \
         --prefix OMNETPP_IMAGE_PATH ";" "${concatStringsSep ";" OMNETPP_IMAGE_PATH}" \
         --prefix NEDPATH ";" "${concatStringsSep ";" NEDPATH}" \
         --set QT_STYLE_OVERRIDE ${omnetpp.QT_STYLE_OVERRIDE}
