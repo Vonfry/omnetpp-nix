@@ -18,7 +18,7 @@ let
   OMNETPP_IMAGE_PATH = [ "./images"
                          "./bitmaps"
                          "${omnetpp}/share/images"
-                         "${placeholder "out"}/share/images"
+                         "${placeholder "out"}/images"
                        ];
   NEDPATH = [ "${placeholder "out"}/src"
               "${placeholder "out"}/examples"
