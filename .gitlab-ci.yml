@@ -7,7 +7,7 @@ default:
   before_script:
     - nix-channel --add https://nixos.org/channels/nixos-20.03 nixpkgs
     - nix-channel --update
-    - if [ -d $LOCAL_NIX_STORE/store ]; then nix copy --from file://$LOCAL_NIX_STORE --no-check-sigs --all; fi
+    - if [ -d $LOCAL_NIX_STORE ]; then nix copy --from file://$LOCAL_NIX_STORE --no-check-sigs --all; fi
   after_script:
     - nix copy --to file://$LOCAL_NIX_STORE --all
   cache:
