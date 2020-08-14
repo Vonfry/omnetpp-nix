@@ -14,7 +14,14 @@ let
           else cp name value;
     in concatStringsSep "\n" (flatten (mapAttrsToList f files));
 
-in mkDerivation rec {
+
+  OMNETPP_IMAGE_PATH = omnetpp.OMNETPP_IMAGE_PATH
+                    ++ [ "${placeholder "out"}/share/images" ];
+  NEDPATH = [ "${placeholder "out"}/src"
+              "${placeholder "out"}/tutorials"
+              "${placeholder "out"}/examples"
+            ];
+in mkDerivation {
 
   pname = "INet";
   version = "v4.2.0";
@@ -27,6 +34,8 @@ in mkDerivation rec {
     sha256 = "1aqbnjbxz05xamkdmfqbqf0vz1z8n5wnkh6k41gg7rri7kjb6453";
   };
 
+  inherit OMNETPP_IMAGE_PATH NEDPATH;
+
   nativeBuildInputs = [ wrapQtAppsHook perl ];
   propagatedBuildInputs = [ omnetpp ];
 
@@ -38,8 +47,8 @@ in mkDerivation rec {
     export INET_ROOT=`pwd`
     echo $INET_ROOT
     export PATH=$INET_ROOT/bin:$PATH
-    export INET_NED_PATH="$INET_ROOT/src:$INET_ROOT/tutorials:$INET_ROOT/showcases:$INET_ROOT/examples"
-    export INET_OMNETPP_OPTIONS="-n $INET_NED_PATH --image-path=${placeholder "out"}/share/images"
+    export INET_NED_PATH="${concatStringsSep ":" NEDPATH}"
+    export INET_OMNETPP_OPTIONS="-n $INET_NED_PATH --image-path=${concatStringsSep ";" OMNETPP_IMAGE_PATH}"
     export INET_GDB_OPTIONS="-quiet -ex run --args"
     export INET_VALGRIND_OPTIONS="-v --tool=memcheck --leak-check=yes --show-reachable=no --leak-resolution=high --num-callers=40 --freelist-vol=4000000"
     make makefiles
@@ -68,9 +77,9 @@ in mkDerivation rec {
   postFixup = ''
     for f in ${placeholder "out"}/bin/*; do
       wrapProgram $f \
-        --prefix OMNETPP_IMAGE_PATH ";" "./images;./bitmaps;${omnetpp}/share/images;${placeholder "out"}/share/images" \
-        --prefix NEDPATH ";" "${placeholder "out"}/src" \
-        --set QT_STYLE_OVERRIDE fusion
+        --prefix OMNETPP_IMAGE_PATH ";" "${concatStringsSep ";" OMNETPP_IMAGE_PATH}" \
+        --prefix NEDPATH ";" "${concatStringsSep ";" NEDPATH}" \
+        --set QT_STYLE_OVERRIDE ${omnetpp.QT_STYLE_OVERRIDE}
     done
     '';
 

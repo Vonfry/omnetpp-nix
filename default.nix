@@ -4,8 +4,9 @@
   freetype, libX11, libXrender, libXtst, webkitgtk, libsoup, atk, gdk-pixbuf,
   pango, libglvnd, libsecret, withNEDDocGen ? true, graphviz, doxygen,
   with3dVisualization ? false, openscenegraph, osgearth, withParallel ? true,
-  openmpi, withPCAP ? true, libpcap,
-  akaroa ? null # not free
+  openmpi, withPCAP ? true, libpcap, QT_STYLE_OVERRIDE ? "fusion",
+  # not free
+  akaroa ? null
 }:
 
 assert withIDE -> ! builtins.any isNull [ jdk ];
@@ -25,8 +26,13 @@ let
                         (x: "-isystem ${qtbase.dev + /include}/${x}")
                         qtbaseDevDirs;
   libxml2CFlags = "-isystem ${libxml2.dev}/include/libxml2";
+
+  OMNETPP_IMAGE_PATH = [ "./images"
+                         "./bitmaps"
+                         "${placeholder "out"}/share/images"
+                       ];
 in
-stdenv.mkDerivation rec {
+stdenv.mkDerivation {
   pname = "omnetpp";
   version = "5.6.2";
 
@@ -36,6 +42,8 @@ stdenv.mkDerivation rec {
   };
 
   outputs = [ "out" ];
+
+  inherit QT_STYLE_OVERRIDE OMNETPP_IMAGE_PATH;
 
   propagatedNativeBuildInputs = [ gawk which perl file wrapQtAppsHook ];
 
@@ -59,7 +67,7 @@ stdenv.mkDerivation rec {
              ++ optional withParallel openmpi
              ++ optional withPCAP libpcap;
 
-  qtWrappersArgs = [ "--set QT_STYLE_OVERRIDE fusion" ];
+  qtWrappersArgs = [ "--set QT_STYLE_OVERRIDE ${QT_STYLE_OVERRIDE}" ];
 
   NIX_CFLAGS_COMPILE = concatStringsSep " " [ qtbaseCFlags libxml2CFlags ];
 
@@ -68,7 +76,7 @@ stdenv.mkDerivation rec {
             ];
 
   configureFlags = [ "WITH_TKENV=no"
-                     "OMNETPP_IMAGE_PATH=\"./images;./bitmaps;${placeholder "out"}/share/images\""
+                     "OMNETPP_IMAGE_PATH=\"${concatStringsSep ";" OMNETPP_IMAGE_PATH}\""
                    ]
                    ++ optionals (!with3dVisualization) [ "WITH_OSG=no"
                                                          "WITH_OSGEARTH=no"
@@ -147,7 +155,8 @@ stdenv.mkDerivation rec {
         --prefix PATH : ${makeBinPath [ jdk ]}
     )
     for bin in $(find ${placeholder "out"}/share/samples -type f -executable); do
-      wrapQtApp $bin
+      wrapQtApp $bin \
+        --set QT_STYLE_OVERRIDE ${QT_STYLE_OVERRIDE}
     done
 
     (

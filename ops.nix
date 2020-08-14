@@ -20,17 +20,26 @@ let
         "${src}/res/inet-models/ExtendedSWIMMobility/IReactive*.{h,ned}";
     };
   };
+
+  OMNETPP_IMAGE_PATH = inet_.OMNETPP_IMAGE_PATH;
+  NEDPATH = inet_.NEDPATH ++ [ "${placeholder "out"}/src"
+                               "${placeholder "out"}/simulations"
+                             ];
 in
 
+with stdenv.lib;
 stdenv.mkDerivation {
 
   pname = "ops";
   version = "20200805";
 
-  src = src;
+  inherit src;
   nativeBuildInputs = [ omnetpp wrapQtAppsHook perl ];
 
   propagatedBuildInputs = [ keetchi inet_ ];
+
+  inherit OMNETPP_IMAGE_PATH NEDPATH;
+  inet = inet_;
 
   configurePhase = ''
     INET_PATH=${inet_}/src
@@ -87,9 +96,9 @@ stdenv.mkDerivation {
 
   postFixup = ''
     wrapQtApp ${placeholder "out"}/ops-simu \
-        --prefix OMNETPP_IMAGE_PATH ";" "./images;./bitmaps;${omnetpp}/share/images;${inet_}/share/images" \
-        --prefix NEDPATH ";" "${placeholder "out"}/src;${placeholder "out"}/simulations;${inet_}/src" \
-        --set QT_STYLE_OVERRIDE fusion
+        --prefix OMNETPP_IMAGE_PATH ";" "${concatStringsSep ";" OMNETPP_IMAGE_PATH}" \
+        --prefix NEDPATH ";" "${concatStringsSep ";" NEDPATH}" \
+        --set QT_STYLE_OVERRIDE ${omnetpp.QT_STYLE_OVERRIDE}
     '';
 
 }
