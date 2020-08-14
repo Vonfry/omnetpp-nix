@@ -100,10 +100,12 @@ stdenv.mkDerivation {
     '';
 
   postFixup = ''
-    wrapQtApp ${placeholder "out"}/ops-simu \
-        --prefix OMNETPP_IMAGE_PATH ";" "${concatStringsSep ";" OMNETPP_IMAGE_PATH}" \
-        --prefix NEDPATH ";" "${concatStringsSep ";" NEDPATH}" \
-        --set QT_STYLE_OVERRIDE ${omnetpp.QT_STYLE_OVERRIDE}
+    for f in ${placeholder "out"}/bin/* ${placeholder "out"}/ops-simu; do
+      wrapQtApp $f \
+          --prefix OMNETPP_IMAGE_PATH ";" "${concatStringsSep ";" OMNETPP_IMAGE_PATH}" \
+          --prefix NEDPATH ";" "${concatStringsSep ";" NEDPATH}" \
+          --set QT_STYLE_OVERRIDE ${omnetpp.QT_STYLE_OVERRIDE}
+    done
     '';
 
 }
