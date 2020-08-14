@@ -18,7 +18,6 @@ let
   OMNETPP_IMAGE_PATH = omnetpp.OMNETPP_IMAGE_PATH
                     ++ [ "${placeholder "out"}/share/images" ];
   NEDPATH = [ "${placeholder "out"}/src"
-              "${placeholder "out"}/tutorials"
               "${placeholder "out"}/examples"
             ];
 in mkDerivation {
