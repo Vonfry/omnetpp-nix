@@ -40,9 +40,10 @@ stdenv.mkDerivation {
   version = "20200805";
 
   inherit src;
-  nativeBuildInputs = [ omnetpp wrapQtAppsHook perl ];
 
-  propagatedBuildInputs = [ keetchi inet_ ];
+  nativeBuildInputs = [ wrapQtAppsHook perl ];
+
+  propagatedBuildInputs = [ omnetpp keetchi inet_ ];
 
   inet = inet_;
 
@@ -51,8 +52,6 @@ stdenv.mkDerivation {
 
     # Run opp_makemake manual instead of make makefiles
     # Because we need to pass link path
-
-    OPS_MODEL_NAME=ops-simu
 
     KEETCHI_BUILD=true
     KEETCHI_API_PATH=${keetchi}/include
@@ -70,9 +69,9 @@ stdenv.mkDerivation {
     MERGE_LOG_FILES="n"
 
     cd src
-    opp_makemake -r --deep -I$KEETCHI_API_PATH -I$INET_PATH -L$KEETCHI_API_LIB -L$INET_PATH -lkeetchi -lINET --mode ${buildMode} -o $OPS_MODEL_NAME -f
+    opp_makemake -r --deep -I$KEETCHI_API_PATH -I$INET_PATH -L$KEETCHI_API_LIB -L$INET_PATH -lkeetchi -lINET --mode ${buildMode} --make-so -o ops -f
     cd ..
-    opp_makemake -r --deep -I$KEETCHI_API_PATH -I$INET_PATH -L$KEETCHI_API_LIB -L$INET_PATH -lkeetchi -lINET --mode ${buildMode} -o $OPS_MODEL_NAME -f
+    opp_makemake -r --deep -I$KEETCHI_API_PATH -I$INET_PATH -L$KEETCHI_API_LIB -L$INET_PATH -lkeetchi -lINET --mode ${buildMode} -o ops-simu -f
     '';
 
   enableParallelBuilding = true;
@@ -82,6 +81,13 @@ stdenv.mkDerivation {
 
   dontWrapQtApps = true;
 
+  postBuild = ''
+    (
+      cd src
+      make MODE=${buildMode}
+    )
+  '';
+
   installPhase = ''
     rm -rf out
     rm -rf inet/out
@@ -90,8 +96,9 @@ stdenv.mkDerivation {
     ln -s ${placeholder "out"}/inet/bin/*    ${placeholder "out"}/bin/
     ln -s ${placeholder "out"}/inet/src/*.so ${placeholder "out"}/lib/
     ln -s ${placeholder "out"}/inet/src/inet ${placeholder "out"}/include/inet
-    ln -s ${placeholder "out"}/src/*         ${placeholder "out"}/include/
+    ln -s ${placeholder "out"}/src/*.{h,ned} ${placeholder "out"}/include/
     ln -s ${placeholder "out"}/ops-simu      ${placeholder "out"}/bin/
+    ln -s ${placeholder "out"}/src/*.so      ${placeholder "out"}/lib/
     '';
 
   preFixup = ''
