@@ -37,7 +37,7 @@ stdenv.mkDerivation rec {
   version = "5.6.2";
 
   src = fetchurl {
-    url = "https://github.com/omnetpp/omnetpp/releases/download/${pname}-${version}/${pname}-${version}-src-linux.tg";
+    url = "https://github.com/omnetpp/omnetpp/releases/download/${pname}-${version}/${pname}-${version}-src-linux.tar.gz";
     sha256 = "0r8vfy90xah7wp49kdlz0a5x0b6nxy2ny9w45cbxr1l4759xdc4p";
   };
 
