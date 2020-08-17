@@ -24,7 +24,7 @@ let
               "${placeholder "out"}/examples"
             ];
 
-in mkDerivation {
+in mkDerivation rec {
 
   pname = "INet";
   version = "v4.2.0";

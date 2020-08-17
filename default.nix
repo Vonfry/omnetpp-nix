@@ -32,12 +32,12 @@ let
                          "${placeholder "out"}/share/images"
                        ];
 in
-stdenv.mkDerivation {
+stdenv.mkDerivation rec {
   pname = "omnetpp";
   version = "5.6.2";
 
   src = fetchurl {
-    url = "https://github.com/omnetpp/omnetpp/releases/download/omnetpp-5.6.2/omnetpp-5.6.2-src-linux.tgz";
+    url = "https://github.com/omnetpp/omnetpp/releases/download/${pname}-${versino}/${pname}-${version}-src-linux.tg";
     sha256 = "0r8vfy90xah7wp49kdlz0a5x0b6nxy2ny9w45cbxr1l4759xdc4p";
   };
 
