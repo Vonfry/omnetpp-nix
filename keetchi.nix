@@ -2,7 +2,11 @@
 , texlive, doxygen }:
 
 with stdenv;
-mkDerivation {
+let
+  texlive_ = texlive.combine {
+    inherit (texlive ) scheme-medium collection-latexextra;
+  };
+in mkDerivation {
   name = "keetchi";
   version = "20200805";
 
@@ -15,7 +19,7 @@ mkDerivation {
 
   nativeBuildInputs = [ autoreconfHook ]
                    ++ lib.optionals withDoc [ doxygen perl
-                                              texlive.combined.scheme-full
+                                              texlive_
                                             ];
 
   postBuild = lib.optionalString withDoc ''
