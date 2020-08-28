@@ -58,7 +58,6 @@ stdenv.mkDerivation {
     KEETCHI_API_LIB=${keetchi}/lib
 
     INET_BUILD=true
-    INET_PATCH=true
     INET_LIB=$INET_PATH
     INET_NED=$INET_PATH
     INET_VERSION="v4.1.1"
@@ -93,9 +92,6 @@ stdenv.mkDerivation {
     rm -rf inet/out
     cp -r . ${placeholder "out"}
     mkdir ${placeholder "out"}/lib ${placeholder "out"}/bin ${placeholder "out"}/include
-    ln -s ${placeholder "out"}/inet/bin/*    ${placeholder "out"}/bin/
-    ln -s ${placeholder "out"}/inet/src/*.so ${placeholder "out"}/lib/
-    ln -s ${placeholder "out"}/inet/src/inet ${placeholder "out"}/include/inet
     ln -s ${placeholder "out"}/src/*.{h,ned} ${placeholder "out"}/include/
     ln -s ${placeholder "out"}/ops-simu      ${placeholder "out"}/bin/
     ln -s ${placeholder "out"}/src/*.so      ${placeholder "out"}/lib/
