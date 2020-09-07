@@ -1,10 +1,11 @@
 { stdenv, callPackage, lib, fetchurl, gawk, file, which, bison, flex, perl,
-  python3, qtbase, wrapQtAppsHook, libxml2, zlib, nemiver, withIDE ? true, jdk,
+  qtbase, wrapQtAppsHook, libxml2, zlib, nemiver, withIDE ? true, jdk,
   makeWrapper, glib, cairo, gsettings-desktop-schemas, gtk, swt, fontconfig,
   freetype, libX11, libXrender, libXtst, webkitgtk, libsoup, atk, gdk-pixbuf,
   pango, libglvnd, libsecret, withNEDDocGen ? true, graphviz, doxygen,
   with3dVisualization ? false, openscenegraph, osgearth, withParallel ? true,
   openmpi, withPCAP ? true, libpcap, QT_STYLE_OVERRIDE ? "fusion",
+  python ? null, R ? null,
   # not free
   akaroa ? null
 }:
@@ -49,7 +50,7 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = optional withIDE [ makeWrapper ];
 
-  propagatedBuildInputs = [ python3 ]
+  propagatedBuildInputs = [ python R ]
                        ++ optionals with3dVisualization [ osgearth
                                                           openscenegraph
                                                         ]
