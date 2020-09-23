@@ -19,6 +19,7 @@ let
       "src/inet/mobility/contract/" =
         "${src}/res/inet-models/ExtendedSWIMMobility/IReactive*.{h,ned}";
     };
+    inherit buildMode;
   };
 
   OMNETPP_IMAGE_PATH = [ "./images"
