@@ -94,20 +94,20 @@ stdenv.mkDerivation {
     cp -r . ${placeholder "out"}
     mkdir ${placeholder "out"}/lib ${placeholder "out"}/bin ${placeholder "out"}/include
     ln -s ${placeholder "out"}/src/*.{h,ned} ${placeholder "out"}/include/
-    ln -s ${placeholder "out"}/ops-simu      ${placeholder "out"}/bin/
-    ln -s ${placeholder "out"}/src/*.so      ${placeholder "out"}/lib/
+    ln -s ${placeholder "out"}/ops-simu?(_dbg) ${placeholder "out"}/bin/
+    ln -s ${placeholder "out"}/src/*.so        ${placeholder "out"}/lib/
     '';
 
   preFixup = ''
     build_pwd=$(pwd)
     patchelf --set-rpath \
-      $(patchelf --print-rpath ${placeholder "out"}/ops-simu \
+      $(patchelf --print-rpath ${placeholder "out"}/ops-simu?(_dbg) \
         | sed -E "s,$build_pwd,${placeholder "out"},g") \
-      ${placeholder "out"}/ops-simu
+      ${placeholder "out"}/ops-simu?(_dbg)
     '';
 
   postFixup = ''
-    for f in ${placeholder "out"}/bin/* ${placeholder "out"}/ops-simu; do
+    for f in ${placeholder "out"}/bin/* ${placeholder "out"}/ops-simu?(_dbg); do
       wrapQtApp $f \
           --prefix OMNETPP_IMAGE_PATH ";" "${concatStringsSep ";" OMNETPP_IMAGE_PATH}" \
           --prefix NEDPATH ";" "${concatStringsSep ";" NEDPATH}" \
