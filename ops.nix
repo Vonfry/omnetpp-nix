@@ -104,7 +104,7 @@ stdenv.mkDerivation {
     patchelf --set-rpath \
       $(patchelf --print-rpath ${placeholder "out"}/ops-simu${binSuffix} \
         | sed -E "s,$build_pwd,${placeholder "out"},g") \
-      ${placeholder "out"}/ops-simu*
+      ${placeholder "out"}/ops-simu${binSuffix}
     '';
 
   postFixup = ''
