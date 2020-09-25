@@ -5,7 +5,7 @@ stages:
 default:
   image: nixos/nix:latest
   before_script:
-    - nix-env -iA nixpkgs.cachix
+    - nix-env -iA nixpkgs.cachix nixpkgs.bash
     - cachix use omnetpp-nix
     - nix path-info --all > /tmp/store-path-pre-build
   after_script:
