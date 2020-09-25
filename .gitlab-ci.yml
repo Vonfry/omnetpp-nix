@@ -4,6 +4,12 @@ stages:
 
 default:
   image: nixos/nix:latest
+  before_script:
+    - nix-env -iA nixpkgs.cachix
+    - cachix use omnetpp-nix
+    - nix path-info --all > /tmp/store-path-pre-build
+  after_script:
+    - bash -c "comm -13 <(sort /tmp/store-path-pre-build | grep -v '\.drv$') <(nix path-info --all | grep -v '\.drv$' | sort) | cachix push omnetpp-nix"
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
