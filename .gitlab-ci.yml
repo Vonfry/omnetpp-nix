@@ -4,20 +4,9 @@ stages:
 
 default:
   image: nixos/nix:latest
-  before_script:
-    - mkdir .nix
-    - nix-channel --add https://nixos.org/channels/nixos-20.03 nixpkgs
-    - nix-channel --update
-    - if [ -f $LOCAL_NIX_STORE ]; then tar -xkzf $LOCAL_NIX_STORE -C /; fi
-  after_script:
-    - tar -czf $LOCAL_NIX_STORE /nix/store
-  cache:
-    paths:
-      - .nix/
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
-  LOCAL_NIX_STORE: $CI_PROJECT_DIR/.nix/store
 
 omnetpp:
   script:
