@@ -32,6 +32,7 @@ let
               "${inet_}/src"
               "${inet_}/examples"
             ];
+  binSuffix = if buildMode == "debug" then "_dbg" else "";
 in
 
 with stdenv.lib;
@@ -69,9 +70,9 @@ stdenv.mkDerivation {
     MERGE_LOG_FILES="n"
 
     cd src
-    opp_makemake -r --deep -I$KEETCHI_API_PATH -I$INET_PATH -L$KEETCHI_API_LIB -L$INET_PATH -lkeetchi -lINET --mode ${buildMode} --make-so -o ops -f
+    opp_makemake -r --deep -I$KEETCHI_API_PATH -I$INET_PATH -L$KEETCHI_API_LIB -L$INET_PATH -lkeetchi -lINET${binSuffix} --mode ${buildMode} --make-so -o ops${binSuffix} -f
     cd ..
-    opp_makemake -r --deep -I$KEETCHI_API_PATH -I$INET_PATH -L$KEETCHI_API_LIB -L$INET_PATH -lkeetchi -lINET --mode ${buildMode} -o ops-simu -f
+    opp_makemake -r --deep -I$KEETCHI_API_PATH -I$INET_PATH -L$KEETCHI_API_LIB -L$INET_PATH -lkeetchi -lINET${binSuffix} --mode ${buildMode} -o ops-simu${binSuffix} -f
     '';
 
   enableParallelBuilding = true;
@@ -94,20 +95,20 @@ stdenv.mkDerivation {
     cp -r . ${placeholder "out"}
     mkdir ${placeholder "out"}/lib ${placeholder "out"}/bin ${placeholder "out"}/include
     ln -s ${placeholder "out"}/src/*.{h,ned}   ${placeholder "out"}/include/
-    ln -s ${placeholder "out"}/ops-simu*       ${placeholder "out"}/bin/
-    ln -s ${placeholder "out"}/src/*.so        ${placeholder "out"}/lib/
+    ln -s ${placeholder "out"}/ops-simu${binSuffix}       ${placeholder "out"}/bin/
+    ln -s ${placeholder "out"}/src/*.so                   ${placeholder "out"}/lib/
     '';
 
   preFixup = ''
     build_pwd=$(pwd)
     patchelf --set-rpath \
-      $(patchelf --print-rpath ${placeholder "out"}/ops-simu* \
+      $(patchelf --print-rpath ${placeholder "out"}/ops-simu${binSuffix} \
         | sed -E "s,$build_pwd,${placeholder "out"},g") \
       ${placeholder "out"}/ops-simu*
     '';
 
   postFixup = ''
-    for f in ${placeholder "out"}/bin/* ${placeholder "out"}/ops-simu*; do
+    for f in ${placeholder "out"}/bin/* ${placeholder "out"}/ops-simu${binSuffix}; do
       wrapQtApp $f \
           --prefix OMNETPP_IMAGE_PATH ";" "${concatStringsSep ";" OMNETPP_IMAGE_PATH}" \
           --prefix NEDPATH ";" "${concatStringsSep ";" NEDPATH}" \
