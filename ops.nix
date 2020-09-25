@@ -70,9 +70,9 @@ stdenv.mkDerivation {
     MERGE_LOG_FILES="n"
 
     cd src
-    opp_makemake -r --deep -I$KEETCHI_API_PATH -I$INET_PATH -L$KEETCHI_API_LIB -L$INET_PATH -lkeetchi -lINET${binSuffix} --mode ${buildMode} --make-so -o ops${binSuffix} -f
+    opp_makemake -r --deep -I$KEETCHI_API_PATH -I$INET_PATH -L$KEETCHI_API_LIB -L$INET_PATH -lkeetchi -lINET${binSuffix} --mode ${buildMode} --make-so -o ops -f
     cd ..
-    opp_makemake -r --deep -I$KEETCHI_API_PATH -I$INET_PATH -L$KEETCHI_API_LIB -L$INET_PATH -lkeetchi -lINET${binSuffix} --mode ${buildMode} -o ops-simu${binSuffix} -f
+    opp_makemake -r --deep -I$KEETCHI_API_PATH -I$INET_PATH -L$KEETCHI_API_LIB -L$INET_PATH -lkeetchi -lINET${binSuffix} --mode ${buildMode} -o ops-simu -f
     '';
 
   enableParallelBuilding = true;
