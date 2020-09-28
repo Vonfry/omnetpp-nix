@@ -165,6 +165,8 @@ stdenv.mkDerivation rec {
         substituteInPlace opp_configfilepath \
           --replace ".." "../share"
     )
+    wrapProgram ${placeholder "out"}/bin/omnetpp \
+          --set GTK_THEME Awaita
     '';
 
   meta = with lib; {
