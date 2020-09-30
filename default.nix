@@ -5,7 +5,7 @@
   pango, libglvnd, libsecret, withNEDDocGen ? true, graphviz, doxygen,
   with3dVisualization ? false, openscenegraph, osgearth, withParallel ? true,
   openmpi, withPCAP ? true, libpcap, QT_STYLE_OVERRIDE ? "fusion",
-  python ? null, R ? null,
+  python ? null, R ? null, sqlite, preferSqlite ? true,
   # not free
   akaroa ? null
 }:
@@ -50,7 +50,7 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = optional withIDE [ makeWrapper ];
 
-  propagatedBuildInputs = [ python R ]
+  propagatedBuildInputs = [ python R sqlite ]
                        ++ optionals with3dVisualization [ osgearth
                                                           openscenegraph
                                                         ]
@@ -72,9 +72,12 @@ stdenv.mkDerivation rec {
 
   NIX_CFLAGS_COMPILE = concatStringsSep " " [ qtbaseCFlags libxml2CFlags ];
 
-  patches = [ ./patch.HOME
-              ./patch.omnetpp
-            ];
+  prePatch = ''
+    substituteInPlace src/utils/Makefile \
+      --replace \$\(HOME\) \$\(TMPDIR\)
+    substituteInPlace src/utils/omnetpp \
+      --replace \$IDEDIR \$TMPDIR
+  '';
 
   configureFlags = [ "WITH_TKENV=no"
                      "OMNETPP_IMAGE_PATH=\"${concatStringsSep ";" OMNETPP_IMAGE_PATH}\""
@@ -82,7 +85,8 @@ stdenv.mkDerivation rec {
                    ++ optionals (!with3dVisualization) [ "WITH_OSG=no"
                                                          "WITH_OSGEARTH=no"
                                                        ]
-                   ++ optional (!withParallel) "WITH_PARSIM=no";
+                   ++ optional (!withParallel) "WITH_PARSIM=no"
+                   ++ optional preferSqlite "PREFER_SQLITE_RESULT_FILES=yes";
 
   preConfigure = ''
     omnetpp_root=`pwd`
