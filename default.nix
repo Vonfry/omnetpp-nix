@@ -56,7 +56,8 @@ stdenv.mkDerivation rec {
                                                         ]
                        ++ optionals (withIDE && withNEDDocGen) [ graphviz
                                                                  doxygen
-                                                               ];
+                                                               ]
+                       ++ optional withParallel openmpi;
   buildInputs = [ nemiver akaroa zlib libxml2  qtbase bison flex ]
              ++ optionals withIDE [ jdk  webkitgtk gtk
                                     fontconfig freetype libX11 libXrender
@@ -65,7 +66,6 @@ stdenv.mkDerivation rec {
                                     libglvnd
                                   ] # some of them has been contained in propagatedbuildinputs
              ++ optionals (withIDE && withNEDDocGen) [ graphviz doxygen ]
-             ++ optional withParallel openmpi
              ++ optional withPCAP libpcap;
 
   qtWrappersArgs = [ "--set QT_STYLE_OVERRIDE ${QT_STYLE_OVERRIDE}" ];
