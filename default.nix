@@ -75,8 +75,6 @@ stdenv.mkDerivation rec {
   prePatch = ''
     substituteInPlace src/utils/Makefile \
       --replace \$\(HOME\) \$\(TMPDIR\)
-    substituteInPlace src/utils/omnetpp \
-      --replace \$IDEDIR \$TMPDIR
   '';
 
   configureFlags = [ "WITH_TKENV=no"
