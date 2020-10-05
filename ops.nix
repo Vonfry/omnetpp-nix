@@ -6,8 +6,8 @@ let
     name = "source-ops";
     owner = "ComNets-Bremen";
     repo = "OPS";
-    rev = "41fbe75280274b42ebb763d78ac6fd1f77c1b564";
-    sha256 = "04f07p7x8rcydm93ywhis0lg19rih6gikimarxkq9lyz0al62yvr";
+    rev = "730a63d21b27ab6e95e8f2709fcc99fa74432665";
+    sha256 = "1r930p96rs6bicxy3iwzb7bj3b0fr609irqv745dvdir8x5q8ik2";
   };
 
   inet_ = inet.override {
