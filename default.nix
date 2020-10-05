@@ -77,6 +77,8 @@ stdenv.mkDerivation rec {
       --replace \$\(HOME\) \$\(TMPDIR\)
   '';
 
+  patches = [ ./patch.omnetpp ];
+
   configureFlags = [ "WITH_TKENV=no"
                      "OMNETPP_IMAGE_PATH=\"${concatStringsSep ";" OMNETPP_IMAGE_PATH}\""
                    ]
