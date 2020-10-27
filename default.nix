@@ -161,7 +161,8 @@ stdenv.mkDerivation rec {
     )
     for bin in $(find ${placeholder "out"}/share/samples -type f -executable); do
       wrapQtApp $bin \
-        --set QT_STYLE_OVERRIDE ${QT_STYLE_OVERRIDE}
+        --set QT_STYLE_OVERRIDE ${QT_STYLE_OVERRIDE} \
+        --prefix OMNETPP_IMAGE_PATH ";" "${concatStringsSep ";" OMNETPP_IMAGE_PATH}"
     done
 
     (
