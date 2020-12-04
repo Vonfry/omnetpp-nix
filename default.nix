@@ -75,6 +75,7 @@ stdenv.mkDerivation rec {
   prePatch = ''
     substituteInPlace src/utils/Makefile \
       --replace \$\(HOME\) \$\(TMPDIR\)
+    patchShebangs src/utils
   '';
 
   patches = [ ./patch.omnetpp ];
