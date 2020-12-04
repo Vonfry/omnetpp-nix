@@ -1,14 +1,13 @@
-let pkgs = import <nixpkgs> {}; in
-{ stdenv ? pkgs.stdenv
-, fetchFromGitHub ? pkgs.fetchFromGitHub
-, cmake ? pkgs.cmake
-, curl ? pkgs.curl
-, gdal ? pkgs.gdal_2
-, openscenegraph ? pkgs.openscenegraph
-, geos ? pkgs.geos
-, qtbase ? pkgs.qt5.qtbase
-, sqlite ? pkgs.sqlite
-, libzip ? pkgs.libzip
+{ stdenv
+, fetchFromGitHub
+, cmake
+, curl
+, gdal
+, openscenegraph
+, geos
+, qtbase
+, sqlite
+, libzip
 }:
 
 stdenv.mkDerivation rec {
