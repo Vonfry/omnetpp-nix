@@ -2,8 +2,8 @@
 
   Build OMNeT++ with Nix.
 
-  Note: WIP, here are some problem to run. Now I try to use it with nix-shell
-  build it for each projects with source files.
+  Note: Here are some problem to run. It can be built and run for some projects,
+  but the build binary is not cleaned up.
 
 ** Usage
 
@@ -14,6 +14,8 @@
    imports `<nixpkgs>` by default. So you can use it simply by nix-env or
    nixpkgs.fetchers with this repo's url.
 
+   This package is uploaded on [[https://app.cachix.org/cache/omnetpp-nix][cachix]], you can take a look.
+
 ** Package List
    - [[file:default.nix][omnetpp]]
        + [[file:osgearth.nix][osgearth]]
@@ -21,3 +23,8 @@
    - [[file:inet.nix][INET]] - [[https://inet.omnetpp.org/][website]]
    - [[file:keetchi.nix][keetchi]] - [[https://github.com/ComNets-Bremen/KeetchiLib][repo]]
    - [[file:ops.nix][OPS]] - [[https://github.com/ComNets-Bremen/OPS][repo]]
+
+* Known Issue
+** NED_PATH, OMNETPP_IMAGE_PATH and other variables
+   You have to set them by yourself with wrapProgram or use omnetpp cli
+   arguments.
