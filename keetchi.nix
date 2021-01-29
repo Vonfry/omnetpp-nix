@@ -1,4 +1,4 @@
-{ stdenv, perl, fetchFromGitHub, autoreconfHook, withDoc ? true
+{ stdenv, perl, fetchFromGitHub, autoreconfHook, withDoc ? false
 , texlive, doxygen }:
 
 with stdenv;
@@ -24,10 +24,10 @@ in mkDerivation {
 
   postBuild = lib.optionalString withDoc ''
     make doxygen-doc
-    '';
+  '';
 
-  postInstall = lib.optionalString withDoc ''
+  postInstall = ''
     cp lib/*.h ${placeholder "out"}/include
-    cp -r doxygen-doc ${placeholder "out"}/doc
-    '';
+    ${lib.optionalString withDoc "cp -r doxygen-doc ${placeholder "out"}/doc"}
+  '';
 }
