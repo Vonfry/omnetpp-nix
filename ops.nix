@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, perl, omnetpp, inet, wrapQtAppsHook, keetchi,
+{ lib, stdenv, fetchFromGitHub, perl, omnetpp, inet, wrapQtAppsHook, keetchi,
   buildMode ? "release" }:
 
 let
@@ -35,7 +35,7 @@ let
   binSuffix = if buildMode == "debug" then "_dbg" else "";
 in
 
-with stdenv.lib;
+with lib;
 stdenv.mkDerivation {
 
   pname = "ops";

@@ -1,4 +1,5 @@
-{ stdenv, fetchFromGitHub, perl, omnetpp, wrapQtAppsHook, buildMode ? "release",
+{ lib, stdenv, fetchFromGitHub, perl, omnetpp, wrapQtAppsHook,
+  buildMode ? "release",
   copyFiles ? {}
 }:
 

@@ -1,4 +1,5 @@
-{ stdenv
+{ lib
+, stdenv
 , fetchFromGitHub
 , cmake
 , curl
@@ -28,7 +29,7 @@ stdenv.mkDerivation rec {
 
   outputs = [ "out" ];
 
-  meta = with stdenv.lib; {
+  meta = with lib; {
     homepage = "http://osgearth.org";
     description = "osgEarth is a C++ geospatial SDK and terrain engine. Just create a simple XML file, point it at your map data, and go! osgEarth supports all kinds of data and comes with lots of examples to help you get up and running quickly and easily.";
     license = licenses.lgpl3;
