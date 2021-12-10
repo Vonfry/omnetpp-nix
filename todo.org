@@ -9,3 +9,8 @@
 * TODO check output binary's dynamic libraries, and clean up the buildInputs
 
 * setup hook about wrap
+* TODO Migrate to flake[1/3]
+** DONE set flake
+   CLOSED: [2021-12-10 Fri 10:36]
+** TODO use flake in ci
+** TODO remove pkgs file
