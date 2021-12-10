@@ -3,20 +3,19 @@ stages:
   - build-libs
 
 default:
-  image: nixos/nix:latest
+  image: nixpkgs/nix-flakes:latest
   before_script:
-    - nix-env -iA nixpkgs.cachix nixpkgs.bash
-    - cachix use omnetpp-nix
+    - nix run 'nixpkgs#cachix' -- use omnetpp-nix
     - nix path-info --all > /tmp/store-path-pre-build
   after_script:
-    - bash -c "comm -13 <(sort /tmp/store-path-pre-build | grep -v '\.drv$') <(nix path-info --all | grep -v '\.drv$' | sort) | cachix push omnetpp-nix"
+    - bash -c "comm -13 <(sort /tmp/store-path-pre-build | grep -v '\.drv$') <(nix path-info --all | grep -v '\.drv$' | sort) | nix run 'nixpkgs#cachix' -- push omnetpp-nix"
 
 variables:
   GIT_SUBMODULE_STRATEGY: recursive
 
 omnetpp:
   script:
-    - nix-build pkgs.nix -A omnetpp
+    - nix build
   stage: build
   only:
     - tags
