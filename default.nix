@@ -39,7 +39,7 @@ stdenv.mkDerivation rec {
 
   src = fetchurl {
     url = "https://github.com/omnetpp/omnetpp/releases/download/${pname}-${version}/${pname}-${version}-linux-x86_64.tgz";
-    sha256 = "";
+    sha256 = "sha256-BNx7NzG1vVY44fRu8h+virlVLY2rShS9Iil0EeJXM5k=";
   };
 
   outputs = [ "out" ];
@@ -90,15 +90,17 @@ stdenv.mkDerivation rec {
                    ++ optional preferSqlite "PREFER_SQLITE_RESULT_FILES=yes";
 
   preConfigure = ''
-    omnetpp_root=`pwd`
-    export PATH=$omnetpp_root/bin:$PATH
-    export HOSTNAME
-    export HOST
+    export __omnetpp_root_dir=`pwd`
+    export PATH=$__omnetpp_root_dir/bin:$PATH
+    export OMNETPP_RELEASE=$(cat $__omnetpp_root_dir/Version)
+    export HOSTNAME=
+    export HOST=
     export QT_SELECT=5 # on systems with qtchooser, switch to Qt5
+    export QT_LOGGING_RULES='*.debug=false;qt.qpa.*=false'
     # use patch instead, becasue of configure script has a problem with space
     # split between ~isystem~ and ~path~.
     export AR="ar cr"
-    '';
+  '';
 
   enableParallelBuilding = true;
 
@@ -174,6 +176,8 @@ stdenv.mkDerivation rec {
     wrapProgram ${placeholder "out"}/bin/omnetpp \
           --set GTK_THEME Awaita
     '';
+
+  dontPatchShebangs = false;
 
   meta = with lib; {
     homepage= "https://omnetpp.org";
