@@ -1,5 +1,5 @@
 {
-  inputs.nixpkgs = "github:nixos/nixpkgs";
+  inputs.nixpkgs.url = "github:nixos/nixpkgs";
   outputs = { self, nixpkgs }:
     let
       system = "x86_64-linux";
@@ -9,7 +9,7 @@
         inherit (qt5) qtbase wrapQtAppsHook;
         inherit (xorg) libX11 libXrender libXtst;
         gtk = gtk3;
-      } ;
+      };
 
       nixPkgs =  rec {
         callPackage = pkgs.newScope (defaultScope // nixPkgs);
