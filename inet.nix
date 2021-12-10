@@ -28,14 +28,14 @@ let
 in mkDerivation rec {
 
   pname = "INet";
-  version = "v4.2.0";
+  version = "v4.2.8";
 
   src = fetchFromGitHub {
     name = "source-inet";
     owner = "inet-framework";
     repo = "inet";
     rev = version;
-    sha256 = "1aqbnjbxz05xamkdmfqbqf0vz1z8n5wnkh6k41gg7rri7kjb6453";
+    sha256 = "sha256-CBuku6VTl8KtRUzTGbkMZGwcLSyWi6/DOeTRT3o9U6E=";
   };
 
   nativeBuildInputs = [ wrapQtAppsHook perl ];
