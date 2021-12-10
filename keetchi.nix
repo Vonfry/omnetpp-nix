@@ -1,4 +1,4 @@
-{ stdenv, perl, fetchFromGitHub, autoreconfHook, withDoc ? false
+{ lib, stdenv, perl, fetchFromGitHub, autoreconfHook, withDoc ? false
 , texlive, doxygen }:
 
 with stdenv;

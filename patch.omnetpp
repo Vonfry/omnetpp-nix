@@ -1,18 +1,18 @@
 diff --git a/src/utils/omnetpp b/src/utils/omnetpp
-index 1f808e4535..ebc8fa9c5f 100755
+index a0a5488..c34d84d 100755
 --- a/src/utils/omnetpp
 +++ b/src/utils/omnetpp
 @@ -5,6 +5,8 @@
  IDEDIR=`dirname $0`/../ide
  PLATFORM=`uname -sm`
  LAUNCHER=omnetpp
-+TMPDIR=/tmp/omnetpp
++TMPDIR=/tmp
 +mkdir -p $TMPDIR
- 
+
  echo Starting the OMNeT++ IDE...
- 
-@@ -28,16 +30,16 @@ DEFAULT_WORKSPACE_ARGS="-vmargs -Dosgi.instance.area.default=$IDEDIR/../samples"
- 
+
+@@ -20,16 +22,16 @@ DEFAULT_WORKSPACE_ARGS="-vmargs -Dosgi.instance.area.default=$IDEDIR/../samples"
+
  case $PLATFORM in
  *MINGW*)
 -	$IDEDIR/${LAUNCHER}.exe "$@" $DEFAULT_WORKSPACE_ARGS 2>$IDEDIR/error.log &

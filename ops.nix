@@ -1,4 +1,4 @@
-{ stdenv, fetchFromGitHub, perl, omnetpp, inet, wrapQtAppsHook, keetchi,
+{ lib, stdenv, fetchFromGitHub, perl, omnetpp, inet, wrapQtAppsHook, keetchi,
   buildMode ? "release" }:
 
 let
@@ -6,8 +6,8 @@ let
     name = "source-ops";
     owner = "ComNets-Bremen";
     repo = "OPS";
-    rev = "424d53cfa7da7ebc0bb1f743e4e6aeda426f782a";
-    sha256 = "13pryyqb9kv1q1vjgmgmpy9mg68glf8mjmgmhvm0vs5f0iny94vc";
+    rev = "693b033ff83690d9c9675774c6d44667691415d2";
+    sha256 = "sha256-LRtFeaI4rY2vOiGJbzN3LIcB1mU8okaLQoGnuMQRa2o=";
   };
 
   inet_ = inet.override {
@@ -35,11 +35,11 @@ let
   binSuffix = if buildMode == "debug" then "_dbg" else "";
 in
 
-with stdenv.lib;
+with lib;
 stdenv.mkDerivation {
 
   pname = "ops";
-  version = "20200805";
+  version = "20211019";
 
   inherit src;
 

@@ -6,20 +6,24 @@
   but the build binary is not cleaned up.
 
 ** Usage
-
    The [[file:./default.nix][default.nix]] is a packed of omnetpp with IDE. But
    this file is a function instead of a drv directly.
+*** Flake
+    Add this repo as inputs and import the packages you wanted.
+*** Legacy
+    N.B. This method will be removed in the future.
 
-   The [[file:./pkgs.nix][pkgs.nix]] is a collection of drvs in this repo. It
-   imports `<nixpkgs>` by default. So you can use it simply by nix-env or
-   nixpkgs.fetchers with this repo's url.
+    The [[file:./pkgs.nix][pkgs.nix]] is a collection of drvs in this repo. It
+    imports `<nixpkgs>` by default. So you can use it simply by nix-env or
+    nixpkgs.fetchers with this repo's url.
 
-   This package is uploaded on [[https://app.cachix.org/cache/omnetpp-nix][cachix]], you can take a look.
+    This package is uploaded on [[https://app.cachix.org/cache/omnetpp-nix][cachix]], you can take a look.
+
 
 ** Package List
    - [[file:default.nix][omnetpp]]
-       + [[file:osgearth.nix][osgearth]]
-       + akaroa - not free, so it is not packed by default.
+     + [[file:osgearth.nix][osgearth]]
+     + akaroa - not free, so it is not packed by default.
    - [[file:inet.nix][INET]] - [[https://inet.omnetpp.org/][website]]
    - [[file:keetchi.nix][keetchi]] - [[https://github.com/ComNets-Bremen/KeetchiLib][repo]]
    - [[file:ops.nix][OPS]] - [[https://github.com/ComNets-Bremen/OPS][repo]]
