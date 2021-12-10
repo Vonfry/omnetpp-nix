@@ -5,7 +5,7 @@
   pango, libglvnd, libsecret, withNEDDocGen ? true, graphviz, doxygen,
   with3dVisualization ? false, openscenegraph, osgearth, withParallel ? true,
   openmpi, withPCAP ? true, libpcap, QT_STYLE_OVERRIDE ? "fusion",
-  python ? null, R ? null, sqlite, preferSqlite ? true,
+  python3, R ? null, sqlite, preferSqlite ? true,
   # not free
   akaroa ? null
 }:
@@ -50,7 +50,7 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = optional withIDE [ makeWrapper ];
 
-  propagatedBuildInputs = [ python R sqlite ]
+  propagatedBuildInputs = [ python3 R sqlite ]
                        ++ optionals with3dVisualization [ osgearth
                                                           openscenegraph
                                                         ]

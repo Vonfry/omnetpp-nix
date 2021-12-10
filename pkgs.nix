@@ -7,7 +7,7 @@ let
     inherit (qt5) qtbase wrapQtAppsHook;
     inherit (xorg) libX11 libXrender libXtst;
     gtk = gtk3;
-  } ;
+  };
 
   nixPkgs =  rec {
     callPackage = pkgs.newScope (defaultScope // nixPkgs);
