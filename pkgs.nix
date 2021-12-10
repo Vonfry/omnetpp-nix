@@ -6,7 +6,6 @@ let
   defaultScope = with pkgs; {
     inherit (qt5) qtbase wrapQtAppsHook;
     inherit (xorg) libX11 libXrender libXtst;
-    jdk = jdk11;
     gtk = gtk3;
   } ;
 

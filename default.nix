@@ -35,11 +35,11 @@ let
 in
 stdenv.mkDerivation rec {
   pname = "omnetpp";
-  version = "5.6.2";
+  version = "5.7";
 
   src = fetchurl {
-    url = "https://github.com/omnetpp/omnetpp/releases/download/${pname}-${version}/${pname}-${version}-src-linux.tgz";
-    sha256 = "0r8vfy90xah7wp49kdlz0a5x0b6nxy2ny9w45cbxr1l4759xdc4p";
+    url = "https://github.com/omnetpp/omnetpp/releases/download/${pname}-${version}/${pname}-${version}-linux-x86_64.tgz";
+    sha256 = "";
   };
 
   outputs = [ "out" ];
